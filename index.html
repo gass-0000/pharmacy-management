@@ -3,9 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<meta http-equiv="Pragma" content="no-cache">
-<meta http-equiv="Expires" content="0">
 <title>薬局マネジメント v0.1.4 Retro</title>
 <style>
 :root{
@@ -138,17 +135,79 @@ button{font:inherit}
 .chart.fatigue-chart .chart-scale{display:flex}
 .chart-value{font-size:9px;font-weight:900;paint-order:stroke;stroke:#fff7dd;stroke-width:3px;stroke-linejoin:round}
 @media(min-width:390px){.profile-grid{grid-template-columns:repeat(2,1fr)}}
+
+/* v0.1.4 Mother2風UI強化 */
+:root{--m2-purple:#241027;--m2-purple2:#4b2454;--m2-gold:#ffd76a;--m2-cream:#fff3c8;--m2-black:#160e18}
+body{
+  background:
+    radial-gradient(circle at 12px 12px,rgba(255,255,255,.23) 0 2px,transparent 3px) 0 0/24px 24px,
+    linear-gradient(180deg,#4d9bd0 0 18%,#76b56c 18% 44%,#d5bd78 44% 100%);
+}
+.app{
+  border:5px solid var(--m2-black);border-radius:18px;
+  box-shadow:0 0 0 3px var(--m2-gold),0 0 0 7px #fff2bd,0 0 0 10px var(--m2-purple),0 10px 0 rgba(0,0,0,.45);
+}
+.topbar{
+  background:
+    repeating-linear-gradient(135deg,rgba(255,255,255,.035) 0 3px,transparent 3px 7px),
+    linear-gradient(180deg,#512858,#221025);
+  border-bottom:4px solid var(--m2-gold);padding:14px 15px;
+  box-shadow:inset 0 -3px 0 #100912;
+}
+.title{font-size:20px;letter-spacing:.06em;text-shadow:2px 2px 0 #000,0 0 6px rgba(255,215,106,.35)}
+.version-mark{font-size:10px;color:#26142a;background:var(--m2-gold);padding:2px 5px;border:2px solid #fff0b8;border-radius:3px;text-shadow:none;vertical-align:middle}
+.navstep{height:8px;border:2px solid #120a14;background:#6b5570;box-shadow:inset 0 1px 0 rgba(255,255,255,.18)}
+.navstep.active,.navstep.done{background:linear-gradient(#ffe779,#e8ad2c);box-shadow:0 0 6px rgba(255,215,106,.7)}
+.screen{background:
+  linear-gradient(rgba(255,249,225,.92),rgba(244,225,173,.94)),
+  repeating-linear-gradient(0deg,transparent 0 7px,rgba(85,56,38,.05) 7px 8px);
+}
+.panel,.focus-box,.dialog,.kpi,.month-kpi,.status-row,.event{
+  border-radius:6px;border-color:var(--m2-black);
+  box-shadow:inset 0 0 0 2px #fff6d5,0 0 0 2px var(--m2-gold),4px 4px 0 rgba(31,16,32,.28);
+}
+.panel-title{
+  background:
+    repeating-linear-gradient(135deg,rgba(255,255,255,.04) 0 3px,transparent 3px 7px),
+    linear-gradient(#55295d,#28122d);
+  border-bottom:3px solid var(--m2-gold);font-size:16px;padding:9px 11px;
+}
+.panel.dark{background:linear-gradient(180deg,#432049,#221126);border-color:#120a14;box-shadow:inset 0 0 0 2px #6d4274,0 0 0 2px var(--m2-gold),4px 4px 0 rgba(0,0,0,.35)}
+.notice{background:rgba(255,247,218,.95);margin:7px 0;border:2px solid #8a7044!important;border-radius:5px;box-shadow:2px 2px 0 rgba(0,0,0,.15)}
+.panel.dark .notice{color:#211b23}
+.pixel-btn,.choice,.chip,.profile-card,.principle-btn{
+  border-radius:5px;border-color:var(--m2-black);
+  box-shadow:inset 0 0 0 2px #fff1bd,0 0 0 1px var(--m2-gold),3px 3px 0 rgba(0,0,0,.27);
+}
+.pixel-btn.primary{background:linear-gradient(#b23d72,#6f204d);border-color:#210d1b;text-shadow:1px 1px 0 #000}
+.pixel-btn.primary:active,.choice:active,.chip:active,.profile-card:active{transform:translate(2px,2px);box-shadow:inset 0 0 0 2px #fff1bd,0 0 0 1px var(--m2-gold),1px 1px 0 rgba(0,0,0,.27)}
+.choice.selected,.principle-btn.selected,.profile-card.selected{background:linear-gradient(#eff9b8,#badb6d)}
+.profile-grid{gap:10px}
+.profile-card{background:linear-gradient(#fff5cf,#eed59c);padding:10px}
+.profile-card.selected:before{content:'▶';position:absolute;left:-8px;top:8px;color:#9b205b;text-shadow:1px 1px #fff;font-weight:900}
+.avatar{border-radius:4px;border-color:#1b101c;background:linear-gradient(#ffd48e,#d98b55);box-shadow:inset 0 0 0 2px #fff0bd,2px 2px 0 rgba(0,0,0,.25)}
+.profile-detail{background:#fff4ca;border:3px double #5a365f}
+.bar,.meter{border-width:2px;border-radius:1px;background:#241a25;box-shadow:inset 0 0 0 1px #090609}
+.bar span,.meter i{border-right:1px solid #171017}
+.chart{border-color:#160e18;box-shadow:inset 0 0 0 2px #fff5cd,0 0 0 2px var(--m2-gold),4px 4px 0 rgba(0,0,0,.25)}
+.chart.fatigue-chart{background:
+ linear-gradient(to top,rgba(91,177,69,.32) 0 40%,rgba(246,216,68,.32) 40% 60%,rgba(238,145,53,.34) 60% 80%,rgba(214,66,70,.34) 80% 100%),#fff4cf}
+.chart-scale{font-size:10px;color:#2c1c2d}
+.bottom{background:linear-gradient(transparent,rgba(235,210,146,.96) 34%)}
+.dialog:after{animation:m2blink .7s steps(1) infinite}
+@keyframes m2blink{50%{opacity:0}}
+
 </style>
 </head>
 <body>
 <div class="app">
   <header class="topbar">
     <div>
-      <div class="title" id="headerTitle">薬局マネジメント</div>
+      <div class="title" id="headerTitle">薬局マネジメント <span class="version-mark">v0.1.4</span></div>
       <div class="subtle" id="headerSub">経営理念を選ぼう</div>
       <div class="navsteps" id="navsteps"></div>
     </div>
-    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px"><div class="badge" id="monthBadge">4月</div><div class="subtle" style="font-weight:900;color:#f8d76b">v0.1.4</div></div>
+    <div class="badge" id="monthBadge">4月</div>
   </header>
 
   <section class="screen active" data-screen="principle">
@@ -372,9 +431,9 @@ function currentScreen(){
 function renderHeader(){
  const title=document.getElementById('headerTitle'),sub=document.getElementById('headerSub'),badge=document.getElementById('monthBadge');
  let labels=[],active=0;
- if(state.mode==='principle'){title.textContent='薬局マネジメント';sub.textContent='経営理念を選ぼう';labels=['理念'];active=0}
- else if(state.mode==='game'){title.textContent='調剤薬局ひまわり';sub.textContent=`4月 ${weekConfigs[state.week].title}`;labels=['状況','配置','判断','結果'];active=state.screen}
- else if(state.mode==='month'){title.textContent='4月のまとめ';sub.textContent=state.screen===0?'グラフで振り返ろう':'決算会議';labels=['推移','会議'];active=state.screen}
+ if(state.mode==='principle'){title.innerHTML='薬局マネジメント <span class="version-mark">v0.1.4</span>';sub.textContent='経営理念を選ぼう';labels=['理念'];active=0}
+ else if(state.mode==='game'){title.innerHTML='調剤薬局ひまわり <span class="version-mark">v0.1.4</span>';sub.textContent=`4月 ${weekConfigs[state.week].title}`;labels=['状況','配置','判断','結果'];active=state.screen}
+ else if(state.mode==='month'){title.innerHTML='4月のまとめ <span class="version-mark">v0.1.4</span>';sub.textContent=state.screen===0?'グラフで振り返ろう':'決算会議';labels=['推移','会議'];active=state.screen}
  else{title.textContent='4月プレイ完了';sub.textContent='体験版ここまで';labels=['完了'];active=0}
  badge.textContent='4月';
  document.getElementById('navsteps').innerHTML=labels.map((_,i)=>`<div class="navstep ${i<active?'done':''} ${i===active?'active':''}"></div>`).join('');
@@ -572,10 +631,6 @@ document.querySelectorAll('[data-principle]').forEach(b=>b.onclick=()=>{state.pr
 document.getElementById('replayBtn').onclick=()=>{state.mode='game';state.week=0;state.screen=0;state.choices=defaultChoices();state.results=[];render()};
 document.getElementById('principleBackBtn').onclick=()=>{state.mode='principle';state.week=0;state.screen=0;state.choices=defaultChoices();state.results=[];render()};
 render();
-</script>
-<script>
-if ('serviceWorker' in navigator) { navigator.serviceWorker.getRegistrations().then(rs=>rs.forEach(r=>r.unregister())); }
-if ('caches' in window) { caches.keys().then(keys=>keys.forEach(k=>caches.delete(k))); }
 </script>
 </body>
 </html>
