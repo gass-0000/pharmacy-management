@@ -6,7 +6,107 @@
 <title>薬局マネジメント - 4月</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;700&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css">
+<style>
+:root{
+  --paper:#F9F6EE; --ink:#2B3A34; --ink-soft:#5C6B64;
+  --sage:#4F7869; --sage-deep:#385A4E; --amber:#C9793A;
+  --brick:#B0473C; --line:#DCD5C4; --card:#FFFFFF;
+  --blue:#446A7B; --gold:#A9782B;
+}
+*{box-sizing:border-box}
+body{
+  margin:0; min-height:100vh; background:#E7E1D2;
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Zen Kaku Gothic New',sans-serif; color:var(--ink);
+  padding:24px 0;
+}
+button{font:inherit}
+.device{
+  width:390px; max-width:94vw; height:820px; max-height:94vh;
+  background:var(--paper); border-radius:34px;
+  box-shadow:0 30px 60px rgba(43,58,52,.25),0 0 0 10px #1C2622;
+  overflow:hidden; display:flex; flex-direction:column; position:relative;
+}
+.notch{position:absolute;top:0;left:50%;transform:translateX(-50%);width:130px;height:24px;background:#1C2622;border-radius:0 0 16px 16px;z-index:20}
+.app-header{padding:34px 22px 14px;background:var(--sage-deep);color:#F3EFE2;flex-shrink:0}
+.app-title{font-family:'Shippori Mincho',serif;font-size:13px;letter-spacing:.14em;opacity:.75;margin:0 0 2px}
+.week-title{font-family:'Shippori Mincho',serif;font-size:22px;font-weight:700;margin:0}
+.stepper{display:flex;gap:6px;margin-top:16px}
+.step{flex:1;height:4px;border-radius:3px;background:rgba(243,239,226,.28)}
+.step.done,.step.active{background:#E8B36B}
+.step-labels{display:flex;justify-content:space-between;margin-top:8px;font-size:10px;opacity:.8}
+.step-labels span{flex:1;text-align:center}.step-labels span:first-child{text-align:left}.step-labels span:last-child{text-align:right}
+.screen{flex:1;overflow-y:auto;padding:20px 20px 110px;display:none}
+.screen.active{display:block;animation:fade .2s ease}
+@keyframes fade{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+.section-label{
+  font-family:'Shippori Mincho',serif;font-size:13px;color:var(--sage-deep);
+  letter-spacing:.08em;margin:22px 0 10px;display:flex;align-items:center;gap:8px
+}
+.section-label:first-child{margin-top:0}
+.section-label::before{content:"";width:3px;height:14px;background:var(--sage);border-radius:2px}
+.alert-card,.staff-card,.judge-card,.carry-card,.note-card,.meeting-card,.metric-card{
+  background:var(--card);border:1px solid var(--line);border-radius:14px
+}
+.alert-card{display:flex;gap:10px;padding:12px 14px;margin-bottom:10px;align-items:flex-start}
+.alert-tag{flex-shrink:0;font-size:11px;font-weight:700;padding:3px 8px;border-radius:20px;white-space:nowrap;margin-top:1px}
+.tag-important{background:#F6E3DF;color:var(--brick)}.tag-caution{background:#F7E9D4;color:var(--amber)}.tag-note{background:#E7EEE9;color:var(--sage-deep)}
+.alert-text{font-size:14px;line-height:1.6}.empty-note{font-size:13px;color:var(--ink-soft);padding:10px 4px 4px}
+.staff-card,.judge-card{padding:16px;margin-bottom:14px}
+.staff-card-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.time{font-weight:700;font-size:15px}.predict-badge{font-size:11px;background:#F6E3DF;color:var(--brick);padding:3px 9px;border-radius:20px;font-weight:700}
+.current-assign{font-size:13px;color:var(--ink-soft);line-height:1.8;margin-bottom:12px;padding-bottom:12px;border-bottom:1px dashed var(--line)}
+.current-assign b{color:var(--ink)}.option-label{font-size:12px;color:var(--ink-soft);margin-bottom:8px}.option-row{display:flex;flex-direction:column;gap:8px}
+.option-btn,.policy-btn,.consult-btn,.month-btn{
+  width:100%;text-align:left;padding:12px 14px;border-radius:10px;border:1.5px solid var(--line);
+  background:#fff;color:var(--ink);cursor:pointer;transition:.15s ease
+}
+.option-btn.selected{border-color:var(--sage-deep);background:var(--sage-deep);color:#fff;font-weight:700}
+.option-main{display:block}.option-sub{display:block;font-size:11px;opacity:.78;margin-top:3px;font-weight:400}
+.judge-title{font-size:14px;font-weight:700;margin-bottom:12px}.chip-row{display:flex;gap:8px;flex-wrap:wrap}
+.chip{padding:9px 13px;border-radius:10px;border:1.5px solid var(--line);font-size:13px;background:#fff;cursor:pointer}
+.chip.selected{border-color:var(--sage-deep);background:var(--sage-deep);color:#fff;font-weight:700}
+.effect-preview{margin-top:10px;font-size:12px;color:var(--sage-deep);background:#EEF3ED;padding:8px 11px;border-radius:8px;line-height:1.6}
+.policy-list,.consult-options,.month-options{display:flex;flex-direction:column;gap:8px}
+.policy-btn,.consult-btn,.month-btn{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.policy-copy,.consult-text,.month-copy{display:block}.policy-title,.consult-title,.month-title{display:block}.sub{display:block;font-size:11px;color:var(--ink-soft);margin-top:3px;font-weight:400}
+.policy-btn.selected,.consult-btn.selected,.month-btn.selected{border-color:var(--sage-deep);background:#EEF3ED}
+.policy-btn.selected .sub,.consult-btn.selected .sub,.month-btn.selected .sub{color:var(--sage-deep)}
+.radio-dot{width:16px;height:16px;border-radius:50%;border:2px solid var(--line);flex-shrink:0;margin-left:10px;position:relative}
+.selected .radio-dot{border-color:var(--sage-deep)}
+.selected .radio-dot::after{content:"";position:absolute;inset:3px;background:var(--sage-deep);border-radius:50%}
+.consult-empty{background:var(--card);border:1px dashed var(--line);border-radius:14px;padding:20px;text-align:center;font-size:13px;color:var(--ink-soft)}
+.consult-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:8px}
+.consult-head{display:flex;gap:12px;align-items:flex-start;margin-bottom:14px;padding-bottom:14px;border-bottom:1px dashed var(--line)}
+.consult-avatar{flex-shrink:0;width:36px;height:36px;border-radius:50%;background:var(--sage);color:#fff;display:flex;align-items:center;justify-content:center;font-family:'Shippori Mincho',serif;font-weight:700;font-size:15px}
+.consult-name{font-size:12px;color:var(--ink-soft);margin-bottom:4px;font-weight:700}.consult-quote{font-size:14px;line-height:1.6}
+.summary-card{background:#FFF7E8;border:1px solid #E8D6B7;border-radius:12px;padding:13px 14px;font-size:12.5px;line-height:1.7;margin-top:16px}
+.result-hero{background:var(--sage-deep);color:#F3EFE2;border-radius:14px;padding:16px 18px;font-size:14px;line-height:1.8;margin-bottom:18px}
+.result-hero .tag{display:inline-block;font-size:11px;background:rgba(243,239,226,.18);padding:3px 9px;border-radius:20px;margin-bottom:8px}
+.kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px}
+.kpi-cell{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.kpi-cell .label{font-size:11px;color:var(--ink-soft);margin-bottom:4px}.kpi-cell .value{font-size:19px;font-weight:700;font-family:'Shippori Mincho',serif}
+.good{color:var(--sage-deep)}.warn{color:var(--amber)}.bad{color:var(--brick)}
+.checklist{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
+.check-item{display:flex;gap:10px;align-items:flex-start;font-size:13.5px;line-height:1.7;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:11px 13px}
+.check-item .mark{flex-shrink:0;font-weight:700;width:18px;text-align:center}.check-item.good .mark{color:var(--sage-deep)}.check-item.warn .mark{color:var(--amber)}
+.carry-card{padding:14px 16px;font-size:13px;color:var(--ink-soft);line-height:1.7}
+.bottom-bar{position:absolute;bottom:0;left:0;right:0;padding:14px 20px calc(22px + env(safe-area-inset-bottom));background:linear-gradient(0deg,var(--paper) 65%,rgba(249,246,238,0));display:flex;gap:10px}
+.btn{flex:1;padding:14px;border-radius:12px;border:none;font-size:15px;font-weight:700;cursor:pointer}
+.btn-primary{background:var(--sage-deep);color:#fff}.btn-ghost{background:transparent;color:var(--ink-soft);border:1.5px solid var(--line);flex:0 0 88px}
+.metric-card{padding:14px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
+.metric-card .metric-name{font-size:13px;color:var(--ink-soft)}.metric-card .metric-value{font-family:'Shippori Mincho',serif;font-size:18px;font-weight:700}
+.stars{font-size:20px;letter-spacing:2px;color:var(--gold)}
+.comment-card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:13px 14px;margin-bottom:10px;line-height:1.7;font-size:13px}
+.comment-card .who{font-size:11px;color:var(--ink-soft);margin-bottom:4px;font-weight:700}
+.note-card,.meeting-card{padding:16px;line-height:1.75;font-size:13px}
+.note-row{margin-bottom:12px}.note-row:last-child{margin-bottom:0}.note-row b{display:block;color:var(--sage-deep);margin-bottom:3px}
+.meeting-line{margin-bottom:12px}.meeting-line:last-child{margin-bottom:0}.speaker{font-weight:700;color:var(--sage-deep)}
+.month-hero{background:#2E4A40;color:#fff;border-radius:14px;padding:18px;margin-bottom:16px}
+.month-hero .eyebrow{font-size:11px;opacity:.7;letter-spacing:.08em;margin-bottom:4px}.month-hero .big{font-size:24px;font-family:'Shippori Mincho',serif;font-weight:700}
+.principle-chip{display:inline-block;margin-top:10px;padding:4px 10px;border-radius:20px;background:rgba(255,255,255,.14);font-size:11px}
+@media (max-height:700px){.device{height:94vh}.app-header{padding-top:30px}.screen{padding-bottom:100px}}
+</style>
 </head>
 <body>
 <div class="device">
@@ -128,6 +228,384 @@
   </div>
 </div>
 
-<script src="js/game.js"></script>
+<script>
+const principle='improve';
+const weekConfigs=[
+  {
+    title:'4月 第1週', focus:'月曜 午前', badge:'混雑予測', noneSub:'追加コストなし／混雑リスクを受け入れる',
+    stock:20, base:{prescriptions:398,profit:245000,wait:20,overtime:2,fatigue:30},
+    alerts:[
+      {type:'important',label:'重要',text:'<b>月曜午前は混雑が予想されます。</b>開局直後の待ち時間が伸びやすい見込みです。'},
+      {type:'caution',label:'注意',text:'花粉症薬Aの在庫は20。今週は足りますが、来週は需要増が見込まれます。'},
+      {type:'note',label:'予定',text:'研修・休暇の予定はありません。全スタッフが通常出勤です。'}
+    ],
+    carry:'初週のため、持ち越し事項はありません。',
+    consultation:null,
+    forcedEvent:null
+  },
+  {
+    title:'4月 第2週', focus:'月曜 午前', badge:'混雑＋需要増', noneSub:'追加コストなし／混雑と欠品リスクを受け入れる',
+    stock:18, base:{prescriptions:425,profit:252000,wait:22,overtime:3,fatigue:34},
+    alerts:[
+      {type:'important',label:'重要',text:'花粉症患者の増加が見込まれます。花粉症薬Aの需要が通常より大きくなる可能性があります。'},
+      {type:'caution',label:'注意',text:'花粉症薬Aの在庫は18。標準発注でも需要次第では不足する可能性があります。'},
+      {type:'note',label:'予定',text:'月曜午前と木曜夕方に混雑が予想されます。'}
+    ],
+    carry:'先週は大きな問題なく終了しました。今週は需要増への備えが課題です。',
+    consultation:null,
+    forcedEvent:'highDemand'
+  },
+  {
+    title:'4月 第3週', focus:'水曜 午後', badge:'研修による欠員', noneSub:'追加コストなし／残る2人の負担が増える',
+    stock:24, base:{prescriptions:390,profit:243000,wait:21,overtime:3,fatigue:38},
+    alerts:[
+      {type:'important',label:'重要',text:'田中が水曜午後に研修で不在です。佐藤・鈴木の2人体制になります。'},
+      {type:'caution',label:'注意',text:'花粉症需要は継続中です。先週の発注内容によって在庫余力が変わります。'},
+      {type:'note',label:'予定',text:'研修は水曜午後のみ。その他の時間帯は通常体制です。'}
+    ],
+    carry:'先週の在庫判断が今週の欠品リスクに影響します。',
+    consultation:null,
+    forcedEvent:'training'
+  },
+  {
+    title:'4月 第4週', focus:'月曜 午前', badge:'平常並み', noneSub:'追加コストなし／今週は混雑リスクも小さめ',
+    stock:32, base:{prescriptions:365,profit:238000,wait:18,overtime:2,fatigue:40},
+    alerts:[
+      {type:'caution',label:'注意',text:'月末で処方箋はやや減少見込みです。混雑は先週までより落ち着く見通しです。'},
+      {type:'note',label:'予定',text:'研修・休暇の予定はありません。全スタッフが通常出勤です。'},
+      {type:'important',label:'重要',text:'田中の研修不在をカバーした佐藤・鈴木の残業がやや増えています。今週は負担への配慮が課題です。'}
+    ],
+    carry:'先週の研修対応で、佐藤・鈴木の疲労がやや高まっています。',
+    consultation:{
+      name:'伊藤（事務）',avatar:'伊',quote:'「月曜午前の受付が忙しすぎて、入力作業が翌日に残っています。」'
+    },
+    forcedEvent:null
+  }
+];
+
+const state={
+  weekIndex:0, screenIndex:0,
+  weeklyChoices:weekConfigs.map(()=>({staffing:'none',order:'standard',policy:'profit',consultation:'wait'})),
+  weeklyResults:[],
+  actionLogs:[],
+  monthPolicy:'inventory'
+};
+
+const weekScreens=['status','staffing','decision','result'];
+const monthScreens=['monthKpi','monthStars','monthComments','monthNote','monthMeeting','monthPolicy'];
+const labels={
+  staffing:{tanaka:'田中を追加',watanabe:'渡辺を追加',none:'変更なし'},
+  order:{none:'発注しない',low:'少なめ',standard:'標準',high:'多め'},
+  policy:{wait:'待ち時間短縮',staff:'社員負担軽減',profit:'利益確保',inventory:'在庫管理徹底',improve:'業務改善'},
+  consultation:{kaizen:'受付手順を見直す',addstaff:'来月から月曜午前の応援体制を申請',asis:'今の体制で続けてもらう',wait:'まず様子を見る'}
+};
+const orderEffects={
+  none:'発注しない — 今週の利益は増えますが、欠品リスクが高まります',
+  low:'少なめ — 廃棄リスクは低い一方、需要増には弱くなります',
+  standard:'標準発注 — 在庫を維持しますが、需要増時は不足する可能性があります',
+  high:'多め — 欠品リスクは下がりますが、仕入れ負担と廃棄リスクが上がります'
+};
+const policyTags={wait:'patient',staff:'staff',profit:'profit',inventory:'improve',improve:'improve'};
+const staffingTags={tanaka:'preventive',watanabe:'preventive',none:'none'};
+const orderTags={high:'preventive',standard:'none',low:'none',none:'reactiveRisk'};
+const consultTags={
+  kaizen:{principle:'improve',responseType:'reactive'},
+  addstaff:{principle:'staff',responseType:'reactive'},
+  asis:{principle:'profit',responseType:'reactive'},
+  wait:{principle:'none',responseType:'reactive'}
+};
+
+const screens=[...document.querySelectorAll('.screen')];
+const nextBtn=document.getElementById('nextBtn');
+const backBtn=document.getElementById('backBtn');
+
+function activeScreenName(){
+  return state.weekIndex<4 ? weekScreens[state.screenIndex] : monthScreens[state.screenIndex];
+}
+function setActiveScreen(name){
+  screens.forEach(s=>s.classList.toggle('active',s.dataset.screen===name));
+}
+function renderHeader(){
+  const isMonth=state.weekIndex>=4;
+  document.getElementById('headerTitle').textContent=isMonth?'4月 月次決算':weekConfigs[state.weekIndex].title;
+  const labelsArr=isMonth?['数値','星','声','ノート','会議','方針']:['状況','人員配置','経営判断','結果'];
+  document.getElementById('stepper').innerHTML=labelsArr.map((_,i)=>`<div class="step ${i<state.screenIndex?'done':''} ${i===state.screenIndex?'active':''}"></div>`).join('');
+  document.getElementById('stepLabels').innerHTML=labelsArr.map(x=>`<span>${x}</span>`).join('');
+}
+function renderStatus(){
+  const w=weekConfigs[state.weekIndex];
+  document.getElementById('statusContent').innerHTML =
+    w.alerts.map(a=>`<div class="section-label">${a.label}</div><div class="alert-card"><span class="alert-tag tag-${a.type}">${a.label}</span><div class="alert-text">${a.text}</div></div>`).join('')+
+    `<div class="section-label">先週からの持ち越し</div><div class="empty-note">${w.carry}</div>`;
+}
+function renderStaffing(){
+  const w=weekConfigs[state.weekIndex], c=state.weeklyChoices[state.weekIndex];
+  document.getElementById('focusTime').textContent=w.focus;
+  document.getElementById('focusBadge').textContent=w.badge;
+  document.getElementById('noneStaffSub').textContent=w.noneSub;
+  document.querySelectorAll('[data-staffing]').forEach(b=>b.classList.toggle('selected',b.dataset.staffing===c.staffing));
+}
+function consultationHtml(){
+  const w=weekConfigs[state.weekIndex], c=state.weeklyChoices[state.weekIndex];
+  if(!w.consultation) return '<div class="consult-empty">今週の相談はありません</div>';
+  return `<div class="consult-card">
+    <div class="consult-head"><span class="consult-avatar">${w.consultation.avatar}</span><div><div class="consult-name">${w.consultation.name}</div><div class="consult-quote">${w.consultation.quote}</div></div></div>
+    <div class="consult-options">
+      <button class="consult-btn ${c.consultation==='kaizen'?'selected':''}" data-consult="kaizen"><span class="consult-text"><span class="consult-title">受付手順を見直す</span><span class="sub">今週の利益は下がるが、来月から業務効率の改善が見込める</span></span><span class="radio-dot"></span></button>
+      <button class="consult-btn ${c.consultation==='addstaff'?'selected':''}" data-consult="addstaff"><span class="consult-text"><span class="consult-title">来月から月曜午前の応援体制を申請</span><span class="sub">今週の数値は変わらないが、来月の待ち時間と社員負担を軽減</span></span><span class="radio-dot"></span></button>
+      <button class="consult-btn ${c.consultation==='asis'?'selected':''}" data-consult="asis"><span class="consult-text"><span class="consult-title">今の体制で続けてもらう</span><span class="sub">コストはかからないが、伊藤の負担とミスリスクが残る</span></span><span class="radio-dot"></span></button>
+      <button class="consult-btn ${c.consultation==='wait'?'selected':''}" data-consult="wait"><span class="consult-text"><span class="consult-title">まず様子を見る</span><span class="sub">判断を保留する。今週も疲労と残業が少し増える</span></span><span class="radio-dot"></span></button>
+    </div></div>`;
+}
+function renderDecision(){
+  const w=weekConfigs[state.weekIndex], c=state.weeklyChoices[state.weekIndex];
+  document.getElementById('stockTitle').textContent=`花粉症薬A（現在庫${w.stock}）`;
+  document.getElementById('orderEffect').textContent=orderEffects[c.order];
+  document.querySelectorAll('[data-order]').forEach(b=>b.classList.toggle('selected',b.dataset.order===c.order));
+  document.querySelectorAll('[data-policy]').forEach(b=>b.classList.toggle('selected',b.dataset.policy===c.policy));
+  document.getElementById('consultContainer').innerHTML=consultationHtml();
+  bindConsultButtons();
+  updateDecisionSummary();
+}
+function updateDecisionSummary(){
+  const c=state.weeklyChoices[state.weekIndex], hasConsult=!!weekConfigs[state.weekIndex].consultation;
+  document.getElementById('decisionSummary').innerHTML =
+    `<b>今週の判断</b><br>人員配置：${labels.staffing[c.staffing]}<br>発注：${labels.order[c.order]}<br>重点方針：${labels.policy[c.policy]}${hasConsult?`<br>相談対応：${labels.consultation[c.consultation]}`:''}`;
+}
+function calculateWeek(index){
+  const w=weekConfigs[index], c=state.weeklyChoices[index];
+  const r={...w.base,shortage:0,complaints:0,waste:0,growth:0,efficiencyDelta:0};
+  if(c.staffing==='tanaka'){r.wait-=4;r.overtime-=1;r.profit-=12000;r.fatigue-=2}
+  if(c.staffing==='watanabe'){r.wait-=2;r.overtime+=1;r.profit-=7000;r.fatigue+=2}
+  if(c.order==='none'){r.profit+=8000}
+  if(c.order==='low'){r.profit+=4000}
+  if(c.order==='high'){r.profit-=6000;r.waste+=index===0?1200:index===3?2600:1800}
+  if(c.policy==='wait'){r.wait-=3;r.fatigue+=10;r.overtime+=1}
+  if(c.policy==='staff'){r.wait+=2;r.overtime-=1;r.profit-=5000;r.fatigue-=8}
+  if(c.policy==='profit'){r.profit+=15000;r.fatigue+=5}
+  if(c.policy==='inventory'){r.wait+=1;r.profit-=3000;r.waste=Math.max(0,r.waste-1000);r.growth+=1}
+  if(c.policy==='improve'){r.profit-=8000;r.wait+=1;r.growth+=2}
+  if(w.forcedEvent==='highDemand'){
+    if(c.order==='none'){r.shortage+=2;r.complaints+=2;r.wait+=6}
+    else if(c.order==='low'){r.shortage+=1;r.complaints+=1;r.wait+=4}
+    else if(c.order==='standard'){r.shortage+=1;r.complaints+=2;r.wait+=6}
+    else {r.wait+=1}
+  }else{
+    if(c.order==='none'){r.shortage+=1;r.complaints+=1;r.wait+=3}
+  }
+  if(w.forcedEvent==='training'){
+    r.overtime+=2;r.fatigue+=6;r.wait+=2;
+    if(c.staffing==='none'){r.wait+=3;r.complaints+=1}
+    if(c.policy==='staff'){r.overtime-=1;r.fatigue-=3}
+  }
+  if(w.consultation){
+    if(c.consultation==='kaizen'){r.profit-=3000;r.overtime+=1;r.fatigue-=3;r.growth+=2}
+    if(c.consultation==='addstaff'){r.profit-=2000;r.growth+=1}
+    if(c.consultation==='asis'){r.profit+=3000;r.fatigue+=8}
+    if(c.consultation==='wait'){r.fatigue+=4;r.overtime+=1}
+  }
+  r.wait=Math.max(10,r.wait);r.overtime=Math.max(0,r.overtime);r.fatigue=Math.max(0,r.fatigue);
+  if(r.wait>=24)r.complaints+=1;
+  return r;
+}
+function resultTexts(index,r){
+  const w=weekConfigs[index],c=state.weeklyChoices[index];
+  let summary=r.shortage>0?'在庫判断の影響で欠品が発生し、患者対応と待ち時間に影響が出ました。':
+    r.wait<=15?'事前の備えが機能し、待ち時間を大きく抑えました。コストと疲労のバランスには注意が必要です。':
+    r.wait<=19?'比較的安定した運営となりました。選択した対策のコストや負担が数字に反映されています。':
+    '大きな混乱はありませんでしたが、現場にはやや余裕のない一週間となりました。';
+  const items=[
+    {kind:r.wait<=19?'good':'warn',text:`平均待ち時間は${r.wait}分でした`},
+    {kind:r.complaints===0?'good':'warn',text:r.complaints===0?'クレームはありませんでした':`クレームが${r.complaints}件発生しました`},
+    {kind:r.shortage===0?'good':'warn',text:r.shortage===0?'医薬品の欠品はありませんでした':`欠品が${r.shortage}件発生しました`}
+  ];
+  if(w.consultation){
+    const map={
+      kaizen:{kind:'warn',text:'受付手順の見直しに着手しました。今週の効果は小さいですが、来月から改善が見込まれます。'},
+      addstaff:{kind:'good',text:'来月からの応援体制を本部へ申請しました。今週の数値にはまだ反映されません。'},
+      asis:{kind:'warn',text:'現体制継続を指示しました。伊藤の負担とミスリスクは残っています。'},
+      wait:{kind:'warn',text:'判断を保留したため、今週も伊藤の疲労と残業が増えました。'}
+    };
+    items.push(map[c.consultation]);
+  }
+  let carry=index===3?'4月の営業が終了しました。月次決算で1か月の判断を振り返ります。':weekConfigs[index+1].carry;
+  if(index===0 && c.order==='high')carry+=' 花粉症薬Aは多めに確保されています。';
+  if(index===1 && r.shortage>0)carry+=' 欠品対応の影響が第3週にも残る可能性があります。';
+  if(index===2 && r.fatigue>=45)carry+=' 佐藤・鈴木の疲労が高く、第4週は負担軽減が課題です。';
+  if(index===3){
+    if(c.consultation==='kaizen')carry+=' 受付手順見直しは5月から業務効率に反映される見込みです。';
+    if(c.consultation==='addstaff')carry+=' 応援体制の申請結果は5月に反映されます。';
+    if(c.consultation==='asis'||c.consultation==='wait')carry+=' 伊藤の負担は未解決のまま5月へ持ち越されます。';
+  }
+  return {summary,items,carry};
+}
+function setValue(id,text,kind=''){const el=document.getElementById(id);el.textContent=text;el.className='value '+kind}
+function renderResult(){
+  const i=state.weekIndex,r=calculateWeek(i),t=resultTexts(i,r);
+  state.weeklyResults[i]=r;
+  document.getElementById('resultSummary').textContent=t.summary;
+  document.getElementById('checklist').innerHTML=t.items.map(x=>`<div class="check-item ${x.kind}"><span class="mark">${x.kind==='good'?'✓':'⚠'}</span><span>${x.text}</span></div>`).join('');
+  document.getElementById('carryLabel').textContent=i===3?'月次決算への持ち越し':'来週への持ち越し';
+  document.getElementById('carryText').textContent=t.carry;
+  setValue('kpiRx',`${r.prescriptions}枚`);
+  setValue('kpiProfit',`${r.profit.toLocaleString()}円`,r.profit>=255000?'good':r.profit<230000?'warn':'');
+  setValue('kpiWait',`${r.wait}分`,r.wait<=16?'good':r.wait>=24?'bad':'');
+  setValue('kpiOvertime',`${r.overtime}時間`,r.overtime<=1?'good':r.overtime>=5?'bad':'');
+  setValue('kpiShortage',`${r.shortage}件`,r.shortage===0?'good':'bad');
+  setValue('kpiComplaints',`${r.complaints}件`,r.complaints===0?'good':'bad');
+}
+function aggregateMonth(){
+  const rs=state.weeklyResults.map((r,i)=>r||calculateWeek(i));
+  const total=(k)=>rs.reduce((a,b)=>a+b[k],0);
+  const avg=(k)=>Math.round(total(k)/rs.length);
+  const metrics={
+    prescriptions:total('prescriptions'),profit:total('profit'),wait:avg('wait'),overtime:total('overtime'),
+    shortage:total('shortage'),complaints:total('complaints'),waste:total('waste'),fatigue:avg('fatigue'),growth:total('growth')
+  };
+  const stars={
+    employee:metrics.fatigue<=30?5:metrics.fatigue<=36?4:metrics.fatigue<=43?3:metrics.fatigue<=50?2:1,
+    profit:metrics.profit>=1010000?5:metrics.profit>=970000?4:metrics.profit>=920000?3:metrics.profit>=870000?2:1,
+    patient:(metrics.wait<=17&&metrics.complaints===0&&metrics.shortage===0)?5:(metrics.wait<=20&&metrics.complaints<=1&&metrics.shortage<=1)?4:(metrics.wait<=23&&metrics.complaints<=3)?3:(metrics.wait<=27?2:1),
+    efficiency:(metrics.wait<=18&&metrics.overtime<=10)?5:(metrics.wait<=20&&metrics.overtime<=13)?4:(metrics.wait<=23&&metrics.overtime<=17)?3:(metrics.wait<=27?2:1),
+    growth:metrics.growth>=6?5:metrics.growth>=4?4:metrics.growth>=2?3:metrics.growth>=1?2:1
+  };
+  const counts={patient:0,staff:0,profit:0,improve:0,preventive:0,reactive:0};
+  state.weeklyChoices.forEach((c,i)=>{
+    counts[policyTags[c.policy]]++;
+    if(staffingTags[c.staffing]==='preventive')counts.preventive++;
+    if(orderTags[c.order]==='preventive')counts.preventive++;
+    if(weekConfigs[i].consultation){
+      const t=consultTags[c.consultation];
+      if(t.principle!=='none')counts[t.principle]++;
+      counts.reactive++;
+    }
+  });
+  return {metrics,stars,counts};
+}
+function renderMonth(){
+  const m=aggregateMonth();
+  document.getElementById('principleDisplay').textContent='経営理念：改善第一';
+  document.getElementById('monthKpiGrid').innerHTML=[
+    ['売上相当（処方箋枚数）',`${m.metrics.prescriptions}枚`],
+    ['営業利益',`${m.metrics.profit.toLocaleString()}円`],
+    ['医薬品廃棄額',`${m.metrics.waste.toLocaleString()}円`],
+    ['平均待ち時間',`${m.metrics.wait}分`],
+    ['残業時間',`${m.metrics.overtime}時間`]
+  ].map(x=>`<div class="metric-card"><span class="metric-name">${x[0]}</span><span class="metric-value">${x[1]}</span></div>`).join('');
+  const starRows=[
+    ['😊 社員満足',m.stars.employee],['💰 利益',m.stars.profit],['⭐ 患者満足',m.stars.patient],['⚙️ 業務効率',m.stars.efficiency],['🌱 成長',m.stars.growth]
+  ];
+  document.getElementById('starList').innerHTML=starRows.map(x=>`<div class="metric-card"><span class="metric-name">${x[0]}</span><span class="stars">${'★'.repeat(x[1])}${'☆'.repeat(5-x[1])}</span></div>`).join('');
+  const worst=Object.entries(m.stars).sort((a,b)=>a[1]-b[1])[0][0];
+  const best=Object.entries(m.stars).sort((a,b)=>b[1]-a[1])[0][0];
+  const hqMap={
+    employee:'残業と疲労が高めです。5月は人員配置と負担軽減を検討してください。',
+    profit:'利益確保に課題があります。対策コストの効果を見極めてください。',
+    patient:'欠品と待ち時間が患者満足へ影響しています。予測を早めに判断へ反映してください。',
+    efficiency:'現場の滞留が残っています。受付業務の見直しを進めてください。',
+    growth:'今月は将来につながる改善行動が少なめでした。'
+  };
+  document.getElementById('hqComment').textContent=hqMap[worst];
+  const week4Choice=state.weeklyChoices[3].consultation;
+  const staff1=m.metrics.overtime>=15?'「今月は残業が続きました。忙しい時間帯の配置を見直してほしいです。」':'「忙しい週もありましたが、大きく崩れずに運営できました。」';
+  const staff2=week4Choice==='kaizen'?'「受付のやり方を見直してもらえて助かります。来月の変化に期待しています。」':
+    week4Choice==='addstaff'?'「応援体制を申請してもらえて安心しました。」':
+    '「受付入力が翌日に残る状態は、まだ続いています。」';
+  document.getElementById('staffComments').innerHTML=[
+    ['佐藤（薬剤師）',staff1],['伊藤（事務）',staff2]
+  ].map(x=>`<div class="comment-card"><div class="who">${x[0]}</div>${x[1]}</div>`).join('');
+  const patient1=m.metrics.shortage>0?'「必要な薬がなく、受け取りに時間がかかりました。」':'「薬は問題なく受け取れました。」';
+  const patient2=m.metrics.wait>=23?'「対応は丁寧でしたが、少し待ち時間が長かったです。」':'「待ち時間が短く、説明も丁寧でした。」';
+  document.getElementById('patientComments').innerHTML=[
+    ['患者口コミ',patient1],['患者口コミ',patient2]
+  ].map(x=>`<div class="comment-card"><div class="who">${x[0]}</div>${x[1]}</div>`).join('');
+  const bestText={employee:'社員負担を抑える判断',profit:'利益を確保したこと',patient:'患者対応を安定させたこと',efficiency:'待ち時間と残業を抑えたこと',growth:'改善への着手'}[best];
+  const worstText={employee:'疲労と残業が残ったこと',profit:'対策コストで利益が伸びなかったこと',patient:'欠品や待ち時間が発生したこと',efficiency:'受付や人員配置に滞留が残ったこと',growth:'将来につながる行動が少なかったこと'}[worst];
+  const principleAligned=m.counts.improve>=Math.max(m.counts.patient,m.counts.staff,m.counts.profit);
+  document.getElementById('managementNote').innerHTML=
+    `<div class="note-row"><b>良かったこと</b>${bestText}</div>
+     <div class="note-row"><b>反省</b>${worstText}</div>
+     <div class="note-row"><b>来月やること</b>月次方針を決め、4月の課題を5月の運営へつなげる。</div>
+     <div class="note-row"><b>理念との一致</b>${principleAligned?'今月は「改善第一」に沿った判断を比較的多く行いました。':'今月は「改善第一」よりも、短期的な対応を優先する判断が多くなりました。'}</div>`;
+  const meetingA=m.metrics.shortage>0?'花粉症薬の需要予測と発注判断を、来月は早めに行う必要があります。':'在庫はおおむね安定しました。';
+  const meetingB=week4Choice==='kaizen'?'受付手順の見直しを、来月から本格的に進めたいです。':
+    week4Choice==='addstaff'?'申請した応援体制が承認されれば、月曜午前の負担は下がりそうです。':
+    '受付の負担はまだ解消していません。来月も対応をお願いします。';
+  document.getElementById('meetingText').innerHTML=
+    `<div class="meeting-line"><span class="speaker">田中：</span>${meetingA}</div>
+     <div class="meeting-line"><span class="speaker">伊藤：</span>${meetingB}</div>
+     <div class="meeting-line"><span class="speaker">本部：</span>${hqMap[worst]}</div>`;
+  updateNextMonthSummary();
+}
+function updateNextMonthSummary(){
+  const names={inventory:'在庫管理を徹底する',wait:'待ち時間を短縮する',improve:'業務改善を進める',staff:'社員の負担を減らす'};
+  document.getElementById('nextMonthSummary').innerHTML=`<b>5月の方針</b><br>${names[state.monthPolicy]}<br><span style="color:var(--ink-soft)">この方針は5月第1週の初期補正に反映されます。</span>`;
+}
+function renderAll(){
+  const isMonth=state.weekIndex>=4;
+  renderHeader();
+  const name=activeScreenName();
+  setActiveScreen(name);
+  if(!isMonth){
+    if(name==='status')renderStatus();
+    if(name==='staffing')renderStaffing();
+    if(name==='decision')renderDecision();
+    if(name==='result')renderResult();
+  }else{
+    renderMonth();
+  }
+  const total=isMonth?monthScreens.length:weekScreens.length;
+  backBtn.style.visibility=(state.weekIndex===0&&state.screenIndex===0)?'hidden':'visible';
+  if(!isMonth){
+    nextBtn.textContent=['人員配置へ','経営判断へ','結果を見る',state.weekIndex===3?'月次決算へ':'次の週へ'][state.screenIndex];
+  }else{
+    nextBtn.textContent=['星取表へ','現場の声へ','経営ノートへ','決算会議へ','翌月方針へ','4月プレイ完了'][state.screenIndex];
+  }
+}
+nextBtn.addEventListener('click',()=>{
+  if(state.weekIndex<4){
+    if(state.screenIndex<3){state.screenIndex++}
+    else{
+      state.weeklyResults[state.weekIndex]=calculateWeek(state.weekIndex);
+      if(state.weekIndex<3){state.weekIndex++;state.screenIndex=0}
+      else{state.weekIndex=4;state.screenIndex=0}
+    }
+  }else{
+    if(state.screenIndex<5)state.screenIndex++;
+    else{alert('4月プレイ完了。5月の方針は「'+document.querySelector('[data-monthpolicy].selected .month-title').textContent+'」です。');}
+  }
+  renderAll();
+});
+backBtn.addEventListener('click',()=>{
+  if(state.weekIndex<4){
+    if(state.screenIndex>0)state.screenIndex--;
+    else if(state.weekIndex>0){state.weekIndex--;state.screenIndex=3}
+  }else{
+    if(state.screenIndex>0)state.screenIndex--;
+    else{state.weekIndex=3;state.screenIndex=3}
+  }
+  renderAll();
+});
+document.querySelectorAll('[data-staffing]').forEach(btn=>btn.addEventListener('click',()=>{
+  const c=state.weeklyChoices[state.weekIndex];c.staffing=btn.dataset.staffing;renderStaffing();updateDecisionSummary();
+}));
+document.querySelectorAll('[data-order]').forEach(btn=>btn.addEventListener('click',()=>{
+  const c=state.weeklyChoices[state.weekIndex];c.order=btn.dataset.order;renderDecision();
+}));
+document.querySelectorAll('[data-policy]').forEach(btn=>btn.addEventListener('click',()=>{
+  const c=state.weeklyChoices[state.weekIndex];c.policy=btn.dataset.policy;renderDecision();
+}));
+function bindConsultButtons(){
+  document.querySelectorAll('[data-consult]').forEach(btn=>btn.addEventListener('click',()=>{
+    state.weeklyChoices[state.weekIndex].consultation=btn.dataset.consult;renderDecision();
+  }));
+}
+document.querySelectorAll('[data-monthpolicy]').forEach(btn=>btn.addEventListener('click',()=>{
+  document.querySelectorAll('[data-monthpolicy]').forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected');state.monthPolicy=btn.dataset.monthpolicy;updateNextMonthSummary();
+}));
+
+renderAll();
+</script>
 </body>
 </html>
