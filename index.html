@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>薬局マネジメント - 4月</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;700&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="device">
+  <div class="notch"></div>
+  <div class="app-header">
+    <p class="app-title">薬局マネジメント</p>
+    <h1 class="week-title" id="headerTitle">4月 第1週</h1>
+    <div class="stepper" id="stepper"></div>
+    <div class="step-labels" id="stepLabels"></div>
+  </div>
+
+  <div class="screen active" data-screen="status">
+    <div id="statusContent"></div>
+  </div>
+
+  <div class="screen" data-screen="staffing">
+    <div class="section-label">重点時間帯</div>
+    <div class="staff-card">
+      <div class="staff-card-head"><span class="time" id="focusTime"></span><span class="predict-badge" id="focusBadge"></span></div>
+      <div class="current-assign">現在の配置<br>薬剤師:<b>佐藤・鈴木</b>　事務:<b>伊藤</b></div>
+      <div class="option-label">追加配置するスタッフを選択</div>
+      <div class="option-row">
+        <button class="option-btn" data-staffing="tanaka"><span class="option-main">田中を追加する</span><span class="option-sub">待ち時間を大きく短縮／追加コストが発生</span></button>
+        <button class="option-btn" data-staffing="watanabe"><span class="option-main">渡辺を追加する</span><span class="option-sub">受付混雑を緩和／後方事務が残りやすい</span></button>
+        <button class="option-btn selected" data-staffing="none"><span class="option-main">変更しない</span><span class="option-sub" id="noneStaffSub"></span></button>
+      </div>
+    </div>
+    <div class="section-label">その他の時間帯</div>
+    <div class="empty-note">Phase1では、予報で指定された重点時間帯のみ調整します。その他は基本シフトが適用されます。</div>
+  </div>
+
+  <div class="screen" data-screen="decision">
+    <div class="section-label">発注</div>
+    <div class="judge-card">
+      <div class="judge-title" id="stockTitle"></div>
+      <div class="chip-row">
+        <button class="chip" data-order="none">発注しない</button>
+        <button class="chip" data-order="low">少なめ</button>
+        <button class="chip selected" data-order="standard">標準</button>
+        <button class="chip" data-order="high">多め</button>
+      </div>
+      <div class="effect-preview" id="orderEffect"></div>
+    </div>
+
+    <div class="section-label">今週の重点方針</div>
+    <div class="policy-list">
+      <button class="policy-btn" data-policy="wait"><span class="policy-copy"><span class="policy-title">待ち時間短縮</span><span class="sub">待ち時間は短くなるが、社員疲労が増える</span></span><span class="radio-dot"></span></button>
+      <button class="policy-btn" data-policy="staff"><span class="policy-copy"><span class="policy-title">社員負担軽減</span><span class="sub">残業と疲労を抑えるが、待ち時間が伸びる</span></span><span class="radio-dot"></span></button>
+      <button class="policy-btn selected" data-policy="profit"><span class="policy-copy"><span class="policy-title">利益確保</span><span class="sub">利益は増えるが、社員疲労が増える</span></span><span class="radio-dot"></span></button>
+      <button class="policy-btn" data-policy="inventory"><span class="policy-copy"><span class="policy-title">在庫管理徹底</span><span class="sub">廃棄リスクを抑えるが、通常業務が遅くなる</span></span><span class="radio-dot"></span></button>
+      <button class="policy-btn" data-policy="improve"><span class="policy-copy"><span class="policy-title">業務改善</span><span class="sub">今週の効果は小さいが、翌月の成長につながる</span></span><span class="radio-dot"></span></button>
+    </div>
+
+    <div class="section-label">現場からの相談</div>
+    <div id="consultContainer"></div>
+    <div class="summary-card" id="decisionSummary"></div>
+  </div>
+
+  <div class="screen" data-screen="result">
+    <div class="result-hero"><span class="tag">今週の総評</span><br><span id="resultSummary"></span></div>
+    <div class="section-label">主要KPI</div>
+    <div class="kpi-grid">
+      <div class="kpi-cell"><div class="label">処方箋枚数</div><div class="value" id="kpiRx"></div></div>
+      <div class="kpi-cell"><div class="label">週次利益</div><div class="value" id="kpiProfit"></div></div>
+      <div class="kpi-cell"><div class="label">平均待ち時間</div><div class="value" id="kpiWait"></div></div>
+      <div class="kpi-cell"><div class="label">残業時間</div><div class="value" id="kpiOvertime"></div></div>
+      <div class="kpi-cell"><div class="label">欠品</div><div class="value" id="kpiShortage"></div></div>
+      <div class="kpi-cell"><div class="label">クレーム</div><div class="value" id="kpiComplaints"></div></div>
+    </div>
+    <div class="section-label">今週の振り返り</div>
+    <div class="checklist" id="checklist"></div>
+    <div class="section-label" id="carryLabel">来週への持ち越し</div>
+    <div class="carry-card" id="carryText"></div>
+  </div>
+
+  <div class="screen" data-screen="monthKpi">
+    <div class="month-hero"><div class="eyebrow">4月 月次決算</div><div class="big">1か月の答え合わせ</div><span class="principle-chip" id="principleDisplay"></span></div>
+    <div id="monthKpiGrid"></div>
+  </div>
+
+  <div class="screen" data-screen="monthStars">
+    <div class="section-label">5指標</div>
+    <div id="starList"></div>
+    <div class="section-label">本部より</div>
+    <div class="comment-card" id="hqComment"></div>
+  </div>
+
+  <div class="screen" data-screen="monthComments">
+    <div class="section-label">社員コメント</div>
+    <div id="staffComments"></div>
+    <div class="section-label">患者口コミ</div>
+    <div id="patientComments"></div>
+  </div>
+
+  <div class="screen" data-screen="monthNote">
+    <div class="section-label">4月の経営ノート</div>
+    <div class="note-card" id="managementNote"></div>
+  </div>
+
+  <div class="screen" data-screen="monthMeeting">
+    <div class="section-label">決算会議</div>
+    <div class="meeting-card" id="meetingText"></div>
+  </div>
+
+  <div class="screen" data-screen="monthPolicy">
+    <div class="section-label">5月の重点方針</div>
+    <div class="month-options">
+      <button class="month-btn selected" data-monthpolicy="inventory"><span class="month-copy"><span class="month-title">在庫管理を徹底する</span><span class="sub">欠品と廃棄の両方を抑える</span></span><span class="radio-dot"></span></button>
+      <button class="month-btn" data-monthpolicy="wait"><span class="month-copy"><span class="month-title">待ち時間を短縮する</span><span class="sub">患者満足を優先する</span></span><span class="radio-dot"></span></button>
+      <button class="month-btn" data-monthpolicy="improve"><span class="month-copy"><span class="month-title">業務改善を進める</span><span class="sub">受付手順見直しなど、将来効果を優先する</span></span><span class="radio-dot"></span></button>
+      <button class="month-btn" data-monthpolicy="staff"><span class="month-copy"><span class="month-title">社員の負担を減らす</span><span class="sub">残業と疲労を優先して抑える</span></span><span class="radio-dot"></span></button>
+    </div>
+    <div class="summary-card" id="nextMonthSummary"></div>
+  </div>
+
+  <div class="bottom-bar">
+    <button class="btn btn-ghost" id="backBtn" style="visibility:hidden">戻る</button>
+    <button class="btn btn-primary" id="nextBtn">人員配置へ</button>
+  </div>
+</div>
+
+<script src="js/game.js"></script>
+</body>
+</html>
