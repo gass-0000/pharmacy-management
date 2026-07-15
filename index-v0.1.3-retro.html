@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>薬局マネジメント v0.1.3 Retro</title>
+<style>
+:root{
+  --ink:#211b23; --deep:#241126; --deep2:#342039; --cream:#fff4d8;
+  --paper:#f4e6bd; --paper2:#e8d29f; --line:#3d2b35; --mint:#b8dd9b;
+  --green:#77a942; --yellow:#f0cf4a; --orange:#e79a45; --red:#dc645c;
+  --blue:#7da6c4; --pink:#d88aa9; --shadow:#120d14;
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:#92c7d8;font-family:"Hiragino Maru Gothic ProN","Yu Gothic",sans-serif;color:var(--ink)}
+body{
+  background:
+    linear-gradient(#83c8e0 0 18%,#9ed08b 18% 44%,#d8c28b 44% 100%);
+  padding:12px;
+}
+button{font:inherit}
+.app{
+  width:min(100%,430px);margin:auto;min-height:calc(100vh - 24px);
+  border:4px solid var(--line);border-radius:14px;background:var(--paper);
+  box-shadow:0 0 0 3px #f8edc9,0 8px 0 var(--shadow);
+  overflow:hidden;position:relative;
+}
+.topbar{
+  background:linear-gradient(180deg,#2b1830,#1a111e);
+  color:#fff7d8;padding:12px 14px;border-bottom:4px solid var(--line);
+  display:flex;justify-content:space-between;align-items:center;gap:10px
+}
+.title{font-weight:900;letter-spacing:.04em;text-shadow:2px 2px 0 #000;font-size:18px}
+.subtle{font-size:12px;opacity:.82}
+.navsteps{display:flex;gap:5px;margin-top:8px}
+.navstep{height:6px;flex:1;background:#5a4b5b;border:1px solid #130d15;border-radius:2px}
+.navstep.active,.navstep.done{background:var(--yellow)}
+.screen{display:none;padding:12px 12px 88px;min-height:690px}
+.screen.active{display:block}
+.panel{
+  background:var(--cream);border:3px solid var(--line);border-radius:10px;
+  box-shadow:inset 0 0 0 2px #fff8df,3px 3px 0 rgba(33,27,35,.18);
+  padding:12px;margin-bottom:12px
+}
+.panel.dark{background:linear-gradient(#352139,#201423);color:#fff7dc}
+.panel-title{
+  font-weight:900;font-size:15px;margin:-12px -12px 10px;padding:8px 10px;
+  background:linear-gradient(#3b2840,#28192d);color:#fff3d5;
+  border-bottom:3px solid var(--line);text-shadow:1px 1px #000
+}
+.notice{display:flex;gap:10px;align-items:flex-start;padding:10px;border-bottom:2px dashed #c4af7b}
+.notice:last-child{border-bottom:none}
+.notice-icon{font-size:22px;line-height:1}
+.notice strong{display:block;margin-bottom:2px}
+.pixel-btn,.choice,.chip,.profile-card,.principle-btn{
+  border:3px solid var(--line);background:#fff7df;border-radius:8px;
+  box-shadow:inset 0 0 0 2px #f7e7b4,2px 2px 0 rgba(33,27,35,.2);
+}
+.pixel-btn{padding:12px;font-weight:900;cursor:pointer}
+.pixel-btn.primary{background:linear-gradient(#7e4f84,#4c2854);color:#fff7dc}
+.pixel-btn:disabled{opacity:.42;cursor:not-allowed}
+.choice,.principle-btn{width:100%;padding:11px;text-align:left;cursor:pointer;margin-bottom:8px}
+.choice.selected,.principle-btn.selected{background:#dff0ba;box-shadow:inset 0 0 0 2px #fff7cf,2px 2px 0 rgba(33,27,35,.2)}
+.choice-title{font-weight:900;display:block}.choice-sub{display:block;font-size:11px;margin-top:3px;color:#66545d}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{padding:8px 10px;cursor:pointer}
+.chip.selected{background:#ffe36c;font-weight:900}
+.profile-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.profile-card{padding:9px;position:relative;cursor:pointer}
+.profile-card.selected{background:#e5f2bd}
+.profile-card.unavailable{opacity:.43;filter:grayscale(1)}
+.profile-head{display:flex;gap:8px;align-items:center}
+.avatar{
+  width:46px;height:46px;border:3px solid var(--line);border-radius:6px;
+  background:linear-gradient(#e9bb77,#c47b4c);display:flex;align-items:center;justify-content:center;
+  font-size:26px;box-shadow:inset 0 0 0 2px #ffe0a0
+}
+.name{font-weight:900}.role{font-size:10px;color:#5f4c56}.age{font-size:10px;color:#5f4c56}
+.stats{font-size:11px;line-height:1.55;margin-top:7px}.stars{letter-spacing:1px;color:#b67d08;text-shadow:.5px .5px #fff}
+.fatigue-wrap{display:flex;align-items:center;gap:6px;margin-top:6px}
+.fatigue-label{font-size:10px;min-width:28px}
+.bar{
+  flex:1;height:12px;border:2px solid var(--line);background:#493e47;border-radius:2px;overflow:hidden;
+  display:flex;gap:1px;padding:1px
+}
+.bar span{flex:1;background:#5a555b}.bar span.on.g{background:var(--green)}.bar span.on.y{background:var(--yellow)}
+.bar span.on.o{background:var(--orange)}.bar span.on.r{background:var(--red)}
+.fatigue-text{font-size:10px;white-space:nowrap}
+.focus-box{background:#e7d4a6;border:3px solid var(--line);border-radius:8px;padding:10px;margin-bottom:10px}
+.focus-row{display:flex;justify-content:space-between;gap:8px;align-items:center}
+.badge{font-size:10px;background:#3c243f;color:#fff4d9;border:2px solid var(--line);border-radius:12px;padding:3px 7px}
+.result-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.kpi{background:#fff5d6;border:3px solid var(--line);border-radius:8px;padding:9px}
+.kpi-name{font-size:10px;color:#67545c}.kpi-value{font-size:20px;font-weight:900;margin-top:2px}
+.status-list{display:flex;flex-direction:column;gap:8px}
+.status-row{
+  display:grid;grid-template-columns:30px 84px 1fr 58px;gap:7px;align-items:center;
+  padding:8px;background:#f8ebc9;border:2px solid #b69b68;border-radius:7px
+}
+.status-icon{font-size:22px}.status-name{font-weight:900;font-size:12px}.status-word{font-size:11px;text-align:right}
+.meter{height:17px;border:2px solid var(--line);display:flex;gap:2px;padding:2px;background:#403942}
+.meter i{flex:1;background:#5b565c}.meter i.on.g{background:var(--green)}.meter i.on.y{background:var(--yellow)}
+.meter i.on.o{background:var(--orange)}.meter i.on.r{background:var(--red)}
+.event-list{display:flex;flex-direction:column;gap:7px}.event{padding:9px;background:#fff0cd;border:2px solid #bba06c;border-radius:7px;font-size:12px}
+.chart-tabs{display:flex;gap:6px;margin-bottom:10px}.chart-tab{flex:1;padding:8px;border:3px solid var(--line);background:#f4d77d;font-weight:900}
+.chart-tab.active{background:#d7668c;color:white}
+.chart{height:190px;border:3px solid var(--line);background:#fff7dd;padding:14px 10px 22px;position:relative}
+.chart-grid{position:absolute;inset:14px 10px 22px;background:repeating-linear-gradient(to top,transparent 0 36px,#d8c89c 37px 38px)}
+.line-svg{position:absolute;inset:14px 10px 22px;width:calc(100% - 20px);height:calc(100% - 36px)}
+.chart-labels{position:absolute;left:10px;right:10px;bottom:3px;display:flex;justify-content:space-around;font-size:10px}
+.staff-bars{display:flex;flex-direction:column;gap:8px}
+.staff-bar-row{display:grid;grid-template-columns:70px 1fr 54px;gap:8px;align-items:center}
+.month-kpis{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.month-kpi{background:#fff4d4;border:3px solid var(--line);padding:10px;border-radius:8px}
+.month-kpi b{font-size:11px}.month-kpi strong{display:block;font-size:18px;margin-top:4px}
+.star-row{display:flex;justify-content:space-between;padding:9px;border-bottom:2px dashed #baa774}.star-row:last-child{border-bottom:none}
+.dialog{
+  background:#fff7df;border:3px solid var(--line);border-radius:10px;padding:12px;position:relative;
+  box-shadow:inset 0 0 0 2px #fff,3px 3px 0 rgba(0,0,0,.15)
+}
+.dialog:after{content:"▼";position:absolute;right:10px;bottom:4px;font-size:12px}
+.bottom{
+  position:absolute;left:0;right:0;bottom:0;padding:10px;background:linear-gradient(transparent,#ecd79e 35%);
+  display:flex;gap:8px
+}
+.bottom .pixel-btn{flex:1}.bottom .back{flex:0 0 82px}
+.small{font-size:11px}.muted{color:#6e5c63}
+.complete-actions{display:flex;flex-direction:column;gap:8px}
+@media(min-width:390px){.profile-grid{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div>
+      <div class="title" id="headerTitle">薬局マネジメント</div>
+      <div class="subtle" id="headerSub">経営理念を選ぼう</div>
+      <div class="navsteps" id="navsteps"></div>
+    </div>
+    <div class="badge" id="monthBadge">4月</div>
+  </header>
+
+  <section class="screen active" data-screen="principle">
+    <div class="panel dark">
+      <div class="panel-title">経営理念を選ぼう</div>
+      <div class="small">この理念は、月末の経営ノートで行動との一致度を振り返ります。</div>
+    </div>
+    <button class="principle-btn" data-principle="patient"><b>患者第一</b><span class="choice-sub">待ち時間と患者満足を優先</span></button>
+    <button class="principle-btn" data-principle="staff"><b>社員第一</b><span class="choice-sub">疲労と残業を抑える</span></button>
+    <button class="principle-btn" data-principle="profit"><b>利益第一</b><span class="choice-sub">収益とコスト管理を優先</span></button>
+    <button class="principle-btn selected" data-principle="improve"><b>改善第一</b><span class="choice-sub">将来の効率化と仕組みづくりを優先</span></button>
+  </section>
+
+  <section class="screen" data-screen="status">
+    <div class="panel dark">
+      <div class="panel-title">今週の状況</div>
+      <div id="notices"></div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">先週からの持ち越し</div>
+      <div id="carryIn" class="small"></div>
+    </div>
+  </section>
+
+  <section class="screen" data-screen="staffing">
+    <div class="focus-box">
+      <div class="focus-row"><b id="focusTime"></b><span class="badge" id="focusBadge"></span></div>
+      <div class="small muted" style="margin-top:5px">重点時間帯に配置するスタッフを選択</div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">スタッフプロフィール</div>
+      <div class="profile-grid" id="profileGrid"></div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">現在の選択</div>
+      <div id="staffingSummary" class="small"></div>
+    </div>
+  </section>
+
+  <section class="screen" data-screen="decision">
+    <div class="panel">
+      <div class="panel-title">発注</div>
+      <b id="stockTitle"></b>
+      <div class="chips" id="orderChips" style="margin-top:8px">
+        <button class="chip" data-order="none">発注しない</button>
+        <button class="chip" data-order="low">少なめ</button>
+        <button class="chip selected" data-order="standard">標準</button>
+        <button class="chip" data-order="high">多め</button>
+      </div>
+      <div class="small muted" id="orderEffect" style="margin-top:8px"></div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">今週の重点方針</div>
+      <div id="policyList"></div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">現場からの相談</div>
+      <div id="consultBox"></div>
+    </div>
+  </section>
+
+  <section class="screen" data-screen="result">
+    <div class="panel dark">
+      <div class="panel-title">今週の総評</div>
+      <div id="resultSummary"></div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">今週の店舗状況</div>
+      <div class="status-list" id="statusMeters"></div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">主要KPI</div>
+      <div class="result-grid" id="weeklyKpis"></div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">重要な出来事</div>
+      <div class="event-list" id="weeklyEvents"></div>
+    </div>
+  </section>
+
+  <section class="screen" data-screen="month">
+    <div class="panel dark">
+      <div class="panel-title">4月のまとめ</div>
+      <div class="small">グラフで推移を確認し、必要な項目だけ文章で振り返ります。</div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">4週間の推移</div>
+      <div class="chart-tabs">
+        <button class="chart-tab active" data-chart="wait">待ち時間</button>
+        <button class="chart-tab" data-chart="fatigue">平均疲労</button>
+        <button class="chart-tab" data-chart="profit">週次利益</button>
+      </div>
+      <div class="chart">
+        <div class="chart-grid"></div>
+        <svg class="line-svg" id="lineChart" viewBox="0 0 300 150" preserveAspectRatio="none"></svg>
+        <div class="chart-labels"><span>1週</span><span>2週</span><span>3週</span><span>4週</span></div>
+      </div>
+      <div class="small muted" id="chartCaption" style="margin-top:8px"></div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">社員別の状態（最終週の疲労度）</div>
+      <div class="staff-bars" id="staffBars"></div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">月次KPI</div>
+      <div class="month-kpis" id="monthKpis"></div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">5指標の評価</div>
+      <div id="starRows"></div>
+    </div>
+  </section>
+
+  <section class="screen" data-screen="meeting">
+    <div class="panel">
+      <div class="panel-title">月次決算会議</div>
+      <div class="dialog" id="meetingDialog"></div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">経営ノート（理念との一致度）</div>
+      <div id="principleResult"></div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">5月の重点方針</div>
+      <div id="monthPolicyList"></div>
+    </div>
+  </section>
+
+  <section class="screen" data-screen="complete">
+    <div class="panel dark">
+      <div class="panel-title">4月プレイ完了</div>
+      <div id="completeText"></div>
+    </div>
+    <div class="complete-actions">
+      <button class="pixel-btn primary" id="replayBtn">もう一度4月を遊ぶ</button>
+      <button class="pixel-btn" id="principleBackBtn">理念選択へ戻る</button>
+    </div>
+  </section>
+
+  <div class="bottom" id="bottomNav">
+    <button class="pixel-btn back" id="backBtn">戻る</button>
+    <button class="pixel-btn primary" id="nextBtn">開始</button>
+  </div>
+</div>
+
+<script>
+const staffMaster=[
+  {id:'tanaka',name:'田中',age:45,role:'薬剤師・ベテラン',avatar:'👨‍⚕️',dispensing:5,service:4,admin:2,baseFatigue:28},
+  {id:'sato',name:'佐藤',age:36,role:'薬剤師・中堅',avatar:'👩‍⚕️',dispensing:4,service:4,admin:2,baseFatigue:34},
+  {id:'suzuki',name:'鈴木',age:27,role:'薬剤師・若手',avatar:'🧑‍⚕️',dispensing:3,service:3,admin:2,baseFatigue:40},
+  {id:'ito',name:'伊藤',age:39,role:'調剤事務・ベテラン',avatar:'👩‍💼',dispensing:1,service:4,admin:5,baseFatigue:35},
+  {id:'watanabe',name:'渡辺',age:25,role:'調剤事務・若手',avatar:'🧑‍💼',dispensing:1,service:4,admin:2,baseFatigue:30}
+];
+const weekConfigs=[
+ {title:'第1週',focus:'月曜 午前',badge:'混雑予測',stock:20,base:{rx:398,profit:245000,wait:20,overtime:2},
+  notices:[['⚠️','重要','月曜午前は混雑が予想されます。'],['📦','在庫','花粉症薬Aは今週分を確保済みです。'],['📅','予定','研修・休暇はありません。']],
+  carry:'初週のため、持ち越し事項はありません。',event:null,consult:null},
+ {title:'第2週',focus:'月曜 午前',badge:'需要増',stock:18,base:{rx:425,profit:252000,wait:22,overtime:3},
+  notices:[['🌼','重要','花粉症患者が増える見込みです。'],['📦','在庫','花粉症薬Aの在庫はやや少なめです。'],['👥','混雑','月曜午前と木曜夕方が混雑します。']],
+  carry:'先週は大きな問題なく終了しました。',event:'demand',consult:null},
+ {title:'第3週',focus:'水曜 午後',badge:'研修欠員',stock:24,base:{rx:390,profit:243000,wait:21,overtime:3},
+  notices:[['🎓','重要','田中が水曜午後に研修で不在です。'],['🌼','需要','花粉症需要は継続中です。'],['⚠️','負担','佐藤・鈴木への業務集中に注意してください。']],
+  carry:'先週の在庫判断が今週の欠品リスクに影響します。',event:'training',consult:null},
+ {title:'第4週',focus:'月曜 午前',badge:'平常並み',stock:32,base:{rx:365,profit:238000,wait:18,overtime:2},
+  notices:[['📉','見込み','月末で処方箋はやや減少します。'],['😓','負担','佐藤・鈴木の疲労が高まっています。'],['💬','相談','受付業務について伊藤から相談があります。']],
+  carry:'研修対応の影響で薬剤師の疲労が残っています。',event:null,
+  consult:{name:'伊藤',quote:'月曜午前の受付が忙しく、入力作業が翌日に残っています。'}}
+];
+const policies={
+ wait:['待ち時間短縮','待ち時間↓／疲労↑','patient'],
+ staff:['社員負担軽減','残業・疲労↓／待ち時間↑','staff'],
+ profit:['利益確保','利益↑／疲労↑','profit'],
+ inventory:['在庫管理徹底','欠品リスク↓／通常業務↓','improve'],
+ improve:['業務改善','今週効果小／翌月成長↑','improve']
+};
+const orders={
+ none:['発注しない','利益↑／欠品リスク大'],
+ low:['少なめ','廃棄リスク↓／欠品リスク中'],
+ standard:['標準','在庫を標準維持'],
+ high:['多め','欠品リスク↓／仕入負担↑']
+};
+const consultations={
+ kaizen:['受付手順を見直す','今週利益↓／来月効率↑','improve'],
+ addstaff:['来月から応援体制を申請','来月の負担↓','staff'],
+ asis:['今の体制で続けてもらう','利益維持／疲労↑','profit'],
+ wait:['まず様子を見る','疲労・残業が少し増える','none']
+};
+const principleNames={patient:'患者第一',staff:'社員第一',profit:'利益第一',improve:'改善第一'};
+const defaultChoices=()=>weekConfigs.map(()=>({staffing:'none',order:'standard',policy:'profit',consult:'wait'}));
+const state={mode:'principle',screen:0,week:0,principle:'improve',choices:defaultChoices(),results:[],monthPolicy:'improve',chart:'wait'};
+const weekScreens=['status','staffing','decision','result'];
+const monthScreens=['month','meeting'];
+const screens=[...document.querySelectorAll('.screen')];
+const nextBtn=document.getElementById('nextBtn'),backBtn=document.getElementById('backBtn');
+
+function fatigueLevel(v){
+ if(v<20)return['g','余裕あり',1];
+ if(v<40)return['g','安定',2];
+ if(v<60)return['y','やや疲労',3];
+ if(v<80)return['o','疲れ気味',4];
+ return['r','要注意',5];
+}
+function miniBar(v){
+ const [c,t,n]=fatigueLevel(v);
+ return `<div class="fatigue-wrap"><span class="fatigue-label">疲労</span><div class="bar">${[1,2,3,4,5].map(i=>`<span class="${i<=n?'on '+c:''}"></span>`).join('')}</div><span class="fatigue-text">${t}</span></div>`;
+}
+function meter(v,max=5){
+ const n=Math.max(1,Math.min(5,Math.round(v/max*5)));
+ const c=n<=2?'g':n===3?'y':n===4?'o':'r';
+ return `<div class="meter">${[1,2,3,4,5].map(i=>`<i class="${i<=n?'on '+c:''}"></i>`).join('')}</div>`;
+}
+function stars(n){return '★'.repeat(n)+'☆'.repeat(5-n)}
+function showScreen(name){screens.forEach(s=>s.classList.toggle('active',s.dataset.screen===name))}
+function currentScreen(){
+ if(state.mode==='principle')return'principle';
+ if(state.mode==='complete')return'complete';
+ if(state.mode==='game')return weekScreens[state.screen];
+ return monthScreens[state.screen];
+}
+function renderHeader(){
+ const title=document.getElementById('headerTitle'),sub=document.getElementById('headerSub'),badge=document.getElementById('monthBadge');
+ let labels=[],active=0;
+ if(state.mode==='principle'){title.textContent='薬局マネジメント';sub.textContent='経営理念を選ぼう';labels=['理念'];active=0}
+ else if(state.mode==='game'){title.textContent='調剤薬局さくら';sub.textContent=`4月 ${weekConfigs[state.week].title}`;labels=['状況','配置','判断','結果'];active=state.screen}
+ else if(state.mode==='month'){title.textContent='4月のまとめ';sub.textContent=state.screen===0?'グラフで振り返ろう':'決算会議';labels=['推移','会議'];active=state.screen}
+ else{title.textContent='4月プレイ完了';sub.textContent='体験版ここまで';labels=['完了'];active=0}
+ badge.textContent='4月';
+ document.getElementById('navsteps').innerHTML=labels.map((_,i)=>`<div class="navstep ${i<active?'done':''} ${i===active?'active':''}"></div>`).join('');
+}
+function renderPrinciple(){
+ document.querySelectorAll('[data-principle]').forEach(b=>b.classList.toggle('selected',b.dataset.principle===state.principle));
+}
+function renderStatus(){
+ const w=weekConfigs[state.week];
+ document.getElementById('notices').innerHTML=w.notices.map(n=>`<div class="notice"><span class="notice-icon">${n[0]}</span><div><strong>${n[1]}</strong><span class="small">${n[2]}</span></div></div>`).join('');
+ document.getElementById('carryIn').textContent=w.carry;
+}
+function staffFatigue(id){
+ let v=staffMaster.find(s=>s.id===id).baseFatigue;
+ state.results.forEach(r=>{v+=(r.staffFatigueDelta[id]||0)});
+ return Math.max(0,Math.min(100,v));
+}
+function renderStaffing(){
+ const w=weekConfigs[state.week],c=state.choices[state.week];
+ document.getElementById('focusTime').textContent=w.focus;
+ document.getElementById('focusBadge').textContent=w.badge;
+ document.getElementById('profileGrid').innerHTML=staffMaster.map(s=>{
+   const unavailable=state.week===2&&s.id==='tanaka';
+   const selected=c.staffing===s.id;
+   return `<button class="profile-card ${selected?'selected':''} ${unavailable?'unavailable':''}" data-staff="${s.id}" ${unavailable?'disabled':''}>
+    <div class="profile-head"><span class="avatar">${s.avatar}</span><span><span class="name">${s.name}</span><span class="role">${s.role}</span><span class="age">${s.age}歳</span></span></div>
+    <div class="stats">調剤力 <span class="stars">${stars(s.dispensing)}</span><br>接客力 <span class="stars">${stars(s.service)}</span>${s.admin>2?`<br>事務力 <span class="stars">${stars(s.admin)}</span>`:''}</div>
+    ${miniBar(staffFatigue(s.id))}
+    ${unavailable?'<div class="small" style="margin-top:6px;color:#a83838;font-weight:900">研修のため選択不可</div>':''}
+   </button>`;
+ }).join('');
+ document.getElementById('staffingSummary').textContent=c.staffing==='none'?'追加配置なし':`${staffMaster.find(s=>s.id===c.staffing).name}を重点時間帯に追加配置`;
+ bindStaff();
+}
+function bindStaff(){
+ document.querySelectorAll('[data-staff]').forEach(b=>b.onclick=()=>{
+   if(b.disabled)return;
+   state.choices[state.week].staffing=b.dataset.staff;
+   renderStaffing();
+ });
+}
+function renderDecision(){
+ const w=weekConfigs[state.week],c=state.choices[state.week];
+ document.getElementById('stockTitle').textContent=`花粉症薬A（現在庫 ${w.stock}）`;
+ document.querySelectorAll('[data-order]').forEach(b=>b.classList.toggle('selected',b.dataset.order===c.order));
+ document.getElementById('orderEffect').textContent=orders[c.order][1];
+ document.getElementById('policyList').innerHTML=Object.entries(policies).map(([k,v])=>`<button class="choice ${c.policy===k?'selected':''}" data-policy="${k}"><span class="choice-title">${v[0]}</span><span class="choice-sub">${v[1]}</span></button>`).join('');
+ document.getElementById('consultBox').innerHTML=w.consult?`
+  <div class="dialog"><b>${w.consult.name}</b><br>${w.consult.quote}</div>
+  <div style="margin-top:8px">${Object.entries(consultations).map(([k,v])=>`<button class="choice ${c.consult===k?'selected':''}" data-consult="${k}"><span class="choice-title">${v[0]}</span><span class="choice-sub">${v[1]}</span></button>`).join('')}</div>`:
+  '<div class="small muted">今週の相談はありません。</div>';
+ document.querySelectorAll('[data-policy]').forEach(b=>b.onclick=()=>{c.policy=b.dataset.policy;renderDecision()});
+ document.querySelectorAll('[data-consult]').forEach(b=>b.onclick=()=>{c.consult=b.dataset.consult;renderDecision()});
+}
+document.querySelectorAll('[data-order]').forEach(b=>b.onclick=()=>{state.choices[state.week].order=b.dataset.order;renderDecision()});
+function calcWeek(i){
+ const w=weekConfigs[i],c=state.choices[i];
+ const r={...w.base,shortage:0,complaints:0,waste:0,avgFatigue:0,staffFatigueDelta:{tanaka:0,sato:0,suzuki:0,ito:0,watanabe:0},growth:0};
+ const staff=c.staffing;
+ if(staff!=='none'){
+  const s=staffMaster.find(x=>x.id===staff);
+  if(s.role.includes('薬剤師')){r.wait-=4;r.profit-=12000}else{r.wait-=2;r.profit-=7000;r.overtime+=1}
+  r.staffFatigueDelta[staff]+=4;
+ }
+ if(c.order==='none'){r.profit+=8000;if(w.event==='demand'){r.shortage=2;r.complaints=2;r.wait+=6}else{r.shortage=1;r.complaints=1;r.wait+=3}}
+ if(c.order==='low'){r.profit+=4000;if(w.event==='demand'){r.shortage=1;r.complaints=1;r.wait+=4}}
+ if(c.order==='standard'&&w.event==='demand'){r.shortage=1;r.complaints=2;r.wait+=6}
+ if(c.order==='high'){r.profit-=6000;r.waste=i===3?2600:1800}
+ if(c.policy==='wait'){r.wait-=3;r.overtime+=1;['tanaka','sato','suzuki'].forEach(x=>r.staffFatigueDelta[x]+=7)}
+ if(c.policy==='staff'){r.wait+=2;r.overtime=Math.max(0,r.overtime-1);r.profit-=5000;Object.keys(r.staffFatigueDelta).forEach(x=>r.staffFatigueDelta[x]-=5)}
+ if(c.policy==='profit'){r.profit+=15000;Object.keys(r.staffFatigueDelta).forEach(x=>r.staffFatigueDelta[x]+=4)}
+ if(c.policy==='inventory'){r.wait+=1;r.profit-=3000;r.growth+=1}
+ if(c.policy==='improve'){r.wait+=1;r.profit-=8000;r.growth+=2}
+ if(w.event==='training'){
+  r.wait+=2;r.overtime+=2;r.staffFatigueDelta.sato+=9;r.staffFatigueDelta.suzuki+=9;
+  if(staff==='none'){r.wait+=3;r.complaints+=1}
+ }
+ if(w.consult){
+  if(c.consult==='kaizen'){r.profit-=3000;r.overtime+=1;r.staffFatigueDelta.ito-=4;r.growth+=2}
+  if(c.consult==='addstaff'){r.profit-=2000;r.growth+=1}
+  if(c.consult==='asis'){r.profit+=3000;r.staffFatigueDelta.ito+=10}
+  if(c.consult==='wait'){r.overtime+=1;r.staffFatigueDelta.ito+=6}
+ }
+ if(r.wait>=24)r.complaints++;
+ r.wait=Math.max(10,r.wait);r.overtime=Math.max(0,r.overtime);
+ const finalFatigues=staffMaster.map(s=>Math.max(0,Math.min(100,staffFatigue(s.id)+(r.staffFatigueDelta[s.id]||0))));
+ r.staffFatigues=Object.fromEntries(staffMaster.map((s,idx)=>[s.id,finalFatigues[idx]]));
+ r.avgFatigue=Math.round(finalFatigues.reduce((a,b)=>a+b,0)/finalFatigues.length);
+ return r;
+}
+function renderResult(){
+ const i=state.week,r=calcWeek(i);state.results[i]=r;
+ document.getElementById('resultSummary').textContent=r.shortage?'欠品が発生し、患者対応と待ち時間に影響が出ました。':r.wait<=16?'混雑への備えが機能し、待ち時間を大きく抑えました。':r.avgFatigue>=60?'営業は維持できましたが、社員負担が高い状態です。':'大きな混乱なく、一週間を乗り切りました。';
+ const rows=[
+  ['🕒','待ち時間',Math.min(5,r.wait/6),r.wait>=24?'長い':r.wait<=16?'短い':'普通'],
+  ['😓','社員負担',Math.min(5,r.avgFatigue/20),fatigueLevel(r.avgFatigue)[1]],
+  ['📦','在庫状態',r.shortage?5:r.waste?3:2,r.shortage?'欠品':r.waste?'過剰':'安定'],
+  ['🙂','患者反応',Math.min(5,(r.complaints+1)*1.5),r.complaints?'不満あり':'安定']
+ ];
+ document.getElementById('statusMeters').innerHTML=rows.map(x=>`<div class="status-row"><span class="status-icon">${x[0]}</span><span class="status-name">${x[1]}</span>${meter(x[2])}<span class="status-word">${x[3]}</span></div>`).join('');
+ document.getElementById('weeklyKpis').innerHTML=[
+  ['処方箋枚数',`${r.rx}枚`],['週次利益',`${r.profit.toLocaleString()}円`],['残業時間',`${r.overtime}時間`],['欠品',`${r.shortage}件`]
+ ].map(x=>`<div class="kpi"><div class="kpi-name">${x[0]}</div><div class="kpi-value">${x[1]}</div></div>`).join('');
+ const events=[];
+ if(r.avgFatigue>=55)events.push('⚠ 社員の平均疲労が高まっています。');
+ if(r.shortage)events.push(`⚠ 欠品が${r.shortage}件発生しました。`);
+ else events.push('✓ 欠品はありませんでした。');
+ if(weekConfigs[i].consult){
+  const c=state.choices[i].consult;
+  events.push(c==='kaizen'?'✓ 受付手順の見直しに着手しました。':c==='addstaff'?'✓ 来月の応援体制を申請しました。':'⚠ 伊藤の負担は未解決です。');
+ }
+ document.getElementById('weeklyEvents').innerHTML=events.slice(0,2).map(x=>`<div class="event">${x}</div>`).join('');
+}
+function aggregate(){
+ const rs=weekConfigs.map((_,i)=>state.results[i]||calcWeek(i));
+ const sum=k=>rs.reduce((a,b)=>a+b[k],0),avg=k=>Math.round(sum(k)/4);
+ const metrics={rx:sum('rx'),profit:sum('profit'),wait:avg('wait'),overtime:sum('overtime'),shortage:sum('shortage'),complaints:sum('complaints'),waste:sum('waste'),fatigue:avg('avgFatigue'),growth:sum('growth')};
+ const starsObj={
+  employee:metrics.fatigue<35?5:metrics.fatigue<45?4:metrics.fatigue<58?3:metrics.fatigue<70?2:1,
+  profit:metrics.profit>=1010000?5:metrics.profit>=970000?4:metrics.profit>=920000?3:metrics.profit>=870000?2:1,
+  patient:(metrics.wait<=17&&metrics.complaints===0&&metrics.shortage===0)?5:(metrics.wait<=20&&metrics.complaints<=1&&metrics.shortage<=1)?4:(metrics.wait<=23&&metrics.complaints<=3)?3:2,
+  efficiency:(metrics.wait<=18&&metrics.overtime<=10)?5:(metrics.wait<=20&&metrics.overtime<=13)?4:(metrics.wait<=23&&metrics.overtime<=17)?3:2,
+  growth:metrics.growth>=6?5:metrics.growth>=4?4:metrics.growth>=2?3:metrics.growth>=1?2:1
+ };
+ const counts={patient:0,staff:0,profit:0,improve:0};
+ state.choices.forEach((c,i)=>{counts[policies[c.policy][2]]++;if(weekConfigs[i].consult&&consultations[c.consult][2]!=='none')counts[consultations[c.consult][2]]++});
+ return{rs,metrics,starsObj,counts};
+}
+function renderChart(){
+ const a=aggregate(),vals=state.chart==='wait'?a.rs.map(r=>r.wait):state.chart==='fatigue'?a.rs.map(r=>r.avgFatigue):a.rs.map(r=>Math.round(r.profit/1000));
+ const max=Math.max(...vals)*1.15,min=Math.min(...vals)*.85,pts=vals.map((v,i)=>`${20+i*86},${140-(v-min)/(max-min||1)*120}`).join(' ');
+ document.getElementById('lineChart').innerHTML=`<polyline points="${pts}" fill="none" stroke="#d85d81" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>`+vals.map((v,i)=>`<circle cx="${20+i*86}" cy="${140-(v-min)/(max-min||1)*120}" r="6" fill="#ffe36c" stroke="#4a2a42" stroke-width="3"/>`).join('');
+ document.getElementById('chartCaption').textContent=state.chart==='wait'?'平均待ち時間（分）':state.chart==='fatigue'?'社員平均疲労（内部値を推移として表示）':'週次利益（千円）';
+ document.querySelectorAll('[data-chart]').forEach(b=>b.classList.toggle('active',b.dataset.chart===state.chart));
+}
+function renderMonth(){
+ const a=aggregate();renderChart();
+ const final=a.rs[3].staffFatigues;
+ document.getElementById('staffBars').innerHTML=staffMaster.map(s=>`<div class="staff-bar-row"><b>${s.avatar} ${s.name}</b>${miniBar(final[s.id])}<span class="small">${fatigueLevel(final[s.id])[1]}</span></div>`).join('');
+ document.getElementById('monthKpis').innerHTML=[
+  ['処方箋枚数',`${a.metrics.rx}枚`],['営業利益',`${a.metrics.profit.toLocaleString()}円`],['平均待ち時間',`${a.metrics.wait}分`],['残業時間',`${a.metrics.overtime}時間`]
+ ].map(x=>`<div class="month-kpi"><b>${x[0]}</b><strong>${x[1]}</strong></div>`).join('');
+ const labels=[['😊社員満足',a.starsObj.employee],['💰利益',a.starsObj.profit],['⭐患者満足',a.starsObj.patient],['⚙業務効率',a.starsObj.efficiency],['🌱成長',a.starsObj.growth]];
+ document.getElementById('starRows').innerHTML=labels.map(x=>`<div class="star-row"><b>${x[0]}</b><span class="stars">${stars(x[1])}</span></div>`).join('');
+}
+document.querySelectorAll('[data-chart]').forEach(b=>b.onclick=()=>{state.chart=b.dataset.chart;renderChart()});
+function renderMeeting(){
+ const a=aggregate(),max=Math.max(...['patient','staff','profit','improve'].map(k=>a.counts[k])),score=a.counts[state.principle],ties=['patient','staff','profit','improve'].filter(k=>a.counts[k]===max);
+ let mark='△',text=`今月は「${principleNames[state.principle]}」より、別の価値を優先する判断が多くなりました。`;
+ if(score===max&&ties.length===1){mark='◎';text=`今月は「${principleNames[state.principle]}」に非常によく沿った判断を行いました。`}
+ else if(score===max){mark='○';text=`今月は「${principleNames[state.principle]}」と他の価値を両立する判断が多く見られました。`}
+ document.getElementById('meetingDialog').innerHTML=`田中「在庫と人員配置の判断が、待ち時間と疲労に直接出ましたね。」<br><br>伊藤「来月は受付の負担にも目を向けてください。」`;
+ document.getElementById('principleResult').innerHTML=`<div style="font-size:36px;font-weight:900">${mark}</div><b>${text}</b>`;
+ document.getElementById('monthPolicyList').innerHTML=Object.entries({inventory:'在庫管理を徹底する',wait:'待ち時間を短縮する',improve:'業務改善を進める',staff:'社員の負担を減らす'}).map(([k,v])=>`<button class="choice ${state.monthPolicy===k?'selected':''}" data-monthpolicy="${k}"><span class="choice-title">${v}</span></button>`).join('');
+ document.querySelectorAll('[data-monthpolicy]').forEach(b=>b.onclick=()=>{state.monthPolicy=b.dataset.monthpolicy;renderMeeting()});
+}
+function renderComplete(){
+ document.getElementById('completeText').innerHTML=`経営理念：<b>${principleNames[state.principle]}</b><br>5月の重点方針：<b>${({inventory:'在庫管理',wait:'待ち時間短縮',improve:'業務改善',staff:'社員負担軽減'})[state.monthPolicy]}</b>`;
+}
+function render(){
+ renderHeader();showScreen(currentScreen());
+ document.getElementById('bottomNav').style.display=state.mode==='complete'?'none':'flex';
+ if(state.mode==='principle'){renderPrinciple();backBtn.style.visibility='hidden';nextBtn.textContent='4月を始める'}
+ if(state.mode==='game'){
+  backBtn.style.visibility='visible';
+  const name=weekScreens[state.screen];
+  if(name==='status')renderStatus();if(name==='staffing')renderStaffing();if(name==='decision')renderDecision();if(name==='result')renderResult();
+  nextBtn.textContent=['人員配置へ','経営判断へ','結果を見る',state.week===3?'月次へ':'次の週へ'][state.screen];
+ }
+ if(state.mode==='month'){backBtn.style.visibility='visible';state.screen===0?renderMonth():renderMeeting();nextBtn.textContent=state.screen===0?'決算会議へ':'4月を終了'}
+ if(state.mode==='complete')renderComplete();
+}
+nextBtn.onclick=()=>{
+ if(state.mode==='principle'){state.mode='game';state.screen=0;state.week=0}
+ else if(state.mode==='game'){
+  if(state.screen<3)state.screen++;else{state.results[state.week]=calcWeek(state.week);if(state.week<3){state.week++;state.screen=0}else{state.mode='month';state.screen=0}}
+ }else if(state.mode==='month'){if(state.screen===0)state.screen=1;else state.mode='complete'}
+ render();
+};
+backBtn.onclick=()=>{
+ if(state.mode==='game'){if(state.screen>0)state.screen--;else if(state.week>0){state.week--;state.screen=3}else state.mode='principle'}
+ else if(state.mode==='month'){if(state.screen>0)state.screen--;else{state.mode='game';state.week=3;state.screen=3}}
+ render();
+};
+document.querySelectorAll('[data-principle]').forEach(b=>b.onclick=()=>{state.principle=b.dataset.principle;renderPrinciple()});
+document.getElementById('replayBtn').onclick=()=>{state.mode='game';state.week=0;state.screen=0;state.choices=defaultChoices();state.results=[];render()};
+document.getElementById('principleBackBtn').onclick=()=>{state.mode='principle';state.week=0;state.screen=0;state.choices=defaultChoices();state.results=[];render()};
+render();
+</script>
+</body>
+</html>
