@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <!--
-v0.6.3 iPhone簡単更新版
+v0.7.0 verified iPhone single-file build
+背景画像はHTML内に埋め込み済み。外部assets参照なし。
+-->
+<!--
+v0.7.0 iPhone簡単更新版
 背景画像はHTML内へ埋め込み済みです。
 GitHubではindex.htmlだけを上書きしてください。
 -->
@@ -14,7 +18,7 @@ GitHubではindex.htmlだけを上書きしてください。
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<title>調剤薬局ひまわり 薬局マネジメント v0.6.3</title>
+<title>調剤薬局ひまわり 薬局マネジメント v0.7.0</title>
 <style>
 :root{
   --ink:#211b23; --deep:#241126; --deep2:#342039; --cream:#fff4d8;
@@ -257,7 +261,7 @@ textarea.notebox{width:100%;border:3px solid var(--m2-black);border-radius:8px;p
 .variance-amt.pos{color:#3f7a2c}.variance-amt.neg{color:#a13f38}
 @media(max-width:879px){.hub{margin:10px auto}}
 
-/* ================= v0.6.3 RETRO PHARMACY VISUAL SYSTEM ================= */
+/* ================= v0.7.0 RETRO PHARMACY VISUAL SYSTEM ================= */
 :root{
  --color-bg:#160f1b;--color-panel:#23142b;--color-panel-2:#34203c;
  --color-border:#160c18;--color-border-light:#fff0bd;--color-accent:#f3cc56;
@@ -305,7 +309,7 @@ button{min-height:var(--tap-size);touch-action:manipulation}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
 
 
-/* ================= v0.6.3 BACKGROUND ASSET FIX =================
+/* ================= v0.7.0 BACKGROUND ASSET FIX =================
    背景PNGが読み込めない場合でも黒一色にならないよう、
    各場面に独立したレトロRPG風フォールバックを設定する。 */
 .rpg-scene{
@@ -346,6 +350,13 @@ button{min-height:var(--tap-size);touch-action:manipulation}
     linear-gradient(180deg,#402047 0 58%,#c1a66e 58%);
 }
 
+
+/* ===== v0.7.0 verified embedded-scene layer ===== */
+.rpg-scene{min-height:210px;background:#cbb37b!important}
+.rpg-scene__bg{display:block!important;opacity:1!important;visibility:visible!important;z-index:0;background-size:cover!important;background-position:center!important}
+.rpg-scene__characters{z-index:1}.rpg-scene__effects{z-index:2}.rpg-scene__shade{z-index:3}.rpg-scene__label{z-index:4}
+.scene-box{min-height:210px;background-size:cover!important;background-position:center!important}
+
 </style>
 
 </head>
@@ -355,7 +366,7 @@ button{min-height:var(--tap-size);touch-action:manipulation}
   <div class="hub-shell">
     <div class="hub-top">
       <div>
-        <div class="hub-title">調剤薬局ひまわり <span class="version-mark">v0.6.3</span></div>
+        <div class="hub-title">調剤薬局ひまわり <span class="version-mark">v0.7.0</span></div>
         <div class="hub-sub">拠点マップ — どこへ行きますか？</div>
       </div>
       <div class="badge" id="hubMonthBadge">4月</div>
@@ -396,7 +407,7 @@ button{min-height:var(--tap-size);touch-action:manipulation}
 <div class="app" id="wizardRoot">
   <header class="topbar">
     <div>
-      <div class="title" id="headerTitle">薬局マネジメント <span class="version-mark">v0.6.3</span></div>
+      <div class="title" id="headerTitle">薬局マネジメント <span class="version-mark">v0.7.0</span></div>
       <div class="subtle" id="headerSub">経営理念を選ぼう</div>
       <div class="navsteps" id="navsteps"></div>
     </div>
@@ -1129,10 +1140,10 @@ function renderHeader(){
  const title=document.getElementById('headerTitle'),sub=document.getElementById('headerSub'),badge=document.getElementById('monthBadge');
  let labels=[],active=0;
  const mIdx=currentMonthIndex(),mName=monthNames[mIdx];
- if(state.mode==='principle'){title.innerHTML='薬局マネジメント <span class="version-mark">v0.6.3</span>';sub.textContent='経営理念を選ぼう';labels=['理念'];active=0;badge.textContent=monthNames[0]}
- else if(state.mode==='budget'){title.innerHTML='薬局マネジメント <span class="version-mark">v0.6.3</span>';sub.textContent=`${mName}の予算案を選ぼう`;labels=['予算'];active=0;badge.textContent=mName}
- else if(state.mode==='game'){title.innerHTML='調剤薬局ひまわり <span class="version-mark">v0.6.3</span>';sub.textContent=`${mName} ${weekConfigs[state.week].title}`;labels=['状況','配置','判断','結果'];active=state.screen;badge.textContent=mName}
- else if(state.mode==='month'){title.innerHTML=`${mName}のまとめ <span class="version-mark">v0.6.3</span>`;sub.textContent=state.screen===0?'グラフで振り返ろう':'決算会議';labels=['推移','会議'];active=state.screen;badge.textContent=mName}
+ if(state.mode==='principle'){title.innerHTML='薬局マネジメント <span class="version-mark">v0.7.0</span>';sub.textContent='経営理念を選ぼう';labels=['理念'];active=0;badge.textContent=monthNames[0]}
+ else if(state.mode==='budget'){title.innerHTML='薬局マネジメント <span class="version-mark">v0.7.0</span>';sub.textContent=`${mName}の予算案を選ぼう`;labels=['予算'];active=0;badge.textContent=mName}
+ else if(state.mode==='game'){title.innerHTML='調剤薬局ひまわり <span class="version-mark">v0.7.0</span>';sub.textContent=`${mName} ${weekConfigs[state.week].title}`;labels=['状況','配置','判断','結果'];active=state.screen;badge.textContent=mName}
+ else if(state.mode==='month'){title.innerHTML=`${mName}のまとめ <span class="version-mark">v0.7.0</span>`;sub.textContent=state.screen===0?'グラフで振り返ろう':'決算会議';labels=['推移','会議'];active=state.screen;badge.textContent=mName}
  else{title.textContent='3か月プレイ完了';sub.textContent='体験版ここまで';labels=['完了'];active=0;badge.textContent=monthNames[2]}
  document.getElementById('navsteps').innerHTML=labels.map((_,i)=>`<div class="navstep ${i<active?'done':''} ${i===active?'active':''}"></div>`).join('');
 }
@@ -2330,7 +2341,7 @@ function renderInfoFacility(){
     <div class="event"><b>Phase2</b> OTC（市販薬）売上に季節性を反映し、花粉症・夏バテ・梅雨の時期は物販の動きが良くなるようにしました。5月第1週に「大型連休明けの来局集中」、6月第1週に「梅雨時の医薬品保管ロス」の季節イベントを新設し、薬局らしい季節感を強化しました。</div>
     <div class="event"><b>Phase1</b> 人員配置画面に「配置プレビュー」を追加し、候補ごとの効果（待ち時間短縮）と負担（本人の疲労コスト）を棒グラフで、残業・利益を数値で見込み表示するようにしました。スタッフの得意分野（調剤力・事務力）が配置効果に実際に反映されるようになり、「誰を配置しても同じ」を解消しました。週次結果画面に「なぜそうなった？」欄を追加し、その週の判断・季節要因・スタッフの状態がどの指標にどう影響したかを一覧できるようにしました（いずれもPhase0の因果関係エンジンを利用）。</div>
     <div class="event"><b>Phase0（開発者向け・非表示）</b> 因果関係エンジンの土台（decisionLog・causeEdges・metricNodes）と取得API（getCausesForMetric等）を追加しました。プレイ画面への表示はまだなく、Phase1以降の配置プレビュー等で使用する予定です。</div>
-    <div class="event"><b>v0.6.3</b> 月次決算会議の伊藤のセリフが、3か月目（最終月）でも常に「来月は」と表示される不具合を修正しました（スクリプト読み込み時に一度だけ評価されていたのが原因）。</div>
+    <div class="event"><b>v0.7.0</b> 月次決算会議の伊藤のセリフが、3か月目（最終月）でも常に「来月は」と表示される不具合を修正しました（スクリプト読み込み時に一度だけ評価されていたのが原因）。</div>
     <div class="event"><b>v0.5.3</b> 週次結果確定前の因果ログ固定を修正。復職週の状態判定、廃棄費用と財務の連動、通常配置費と欠員応援費の区分、月次分析文の整合性を改善しました。</div>
     <div class="event"><b>v0.5.2</b> 欠員（休職・退職）確定後に「欠員対応」画面で応援スタッフの要否を選べるようにしました。応援費・現場負担への影響を職種別に反映し、拠点画面から途中で応援方針を変更できます。月次決算会議をKPI連動型にし、その月に最も影響を受けたスタッフの声と「今月の分析」を追加しました。3か月総評に休職・退職・応援方針の反映（人員・組織面の評価）を追加しました。</div>
     <div class="event"><b>v0.5.1</b> スタッフの在籍・休職・退職状態をstate.staffStatusへ一元化しました。相談イベント・月次決算会議・拠点表示のいずれでも休職者・退職者が登場しない／発言しない／復活しないよう修正しました。状態変更履歴（state.staffStatusLog）を追加しました。</div>
