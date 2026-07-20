@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <!--
 v0.8.0 Phase2 iPhone single-file build
-背景画像はHTML内に埋め込み済み。外部assets参照なし。
+既存背景はHTML内に埋め込み済み。週次振り返り背景のみ外部assets参照。
 -->
 <!--
 v0.8.0 Phase2 iPhone簡単更新版
-背景画像はHTML内へ埋め込み済みです。
-GitHubではindex.htmlだけを上書きしてください。
+既存背景はHTML内へ埋め込み済みです。
+週次振り返り背景はassetsフォルダと一緒に配置してください。
 -->
 <html lang="ja">
 <head>
@@ -606,6 +606,63 @@ button{min-height:var(--tap-size);touch-action:manipulation}
  .screen[data-screen="staffing"] .fatigue-wrap .bar{min-width:70px}
 }
 
+
+
+/* Weekly review: formally adopted pharmacy interior background stage.
+   Scoped to the weekly review screen so no other screen is affected. */
+.screen[data-screen="result"]{
+  padding-top:0;
+  background:#f2ddb5;
+}
+.weekly-review-heading{
+  margin:0 -12px;
+  padding:9px 12px;
+  background:linear-gradient(#3b2840,#28192d);
+  color:#fff3d5;
+  border-bottom:3px solid var(--gold);
+  font-weight:900;
+  font-size:15px;
+  letter-spacing:.04em;
+  text-shadow:2px 2px #000;
+}
+.weekly-review-stage{
+  position:relative;
+  isolation:isolate;
+  width:auto;
+  aspect-ratio:1330 / 1182;
+  height:auto;
+  min-height:0;
+  margin:0 -12px 12px;
+  overflow:hidden;
+  background:#efd8ad;
+  border-bottom:3px solid var(--line);
+}
+.weekly-review-layer{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  pointer-events:none;
+}
+.weekly-review-stage .background-layer{z-index:0}
+.weekly-review-stage .back-character-layer{z-index:10}
+.weekly-review-stage .foreground-character-layer{z-index:30}
+.weekly-review-stage .foreground-object-layer{z-index:40}
+.weekly-review-background-image{
+  display:block;
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  object-position:center top;
+  background:#efd8ad;
+  image-rendering:auto;
+  -webkit-user-drag:none;
+  user-select:none;
+}
+.weekly-review-ui{
+  position:relative;
+  z-index:1;
+}
 </style>
 
 </head>
@@ -749,32 +806,51 @@ button{min-height:var(--tap-size);touch-action:manipulation}
   </section>
 
   <section class="screen" data-screen="result">
-    <div class="rpg-scene rpg-scene--result" aria-hidden="true"><div class="rpg-scene__bg"></div><div class="rpg-scene__characters"></div><div class="rpg-scene__effects"><i class="rpg-scene__sunflower"></i></div><div class="rpg-scene__shade"></div><div class="rpg-scene__label">閉店後の週次振り返り</div></div>
-    <div class="panel dark">
-      <div class="panel-title">今週の総評</div>
-      <div id="resultSummary"></div>
+    <div class="weekly-review-heading" role="heading" aria-level="2">閉店後の週次振り返り</div>
+    <div class="weekly-review-stage" aria-label="薬局内の週次振り返りステージ">
+      <div class="weekly-review-layer background-layer">
+        <img
+          class="weekly-review-background-image"
+          src="assets/images/pharmacy/pharmacy-weekly-review-bg.jpeg"
+          alt=""
+          width="1330"
+          height="1182"
+          loading="eager"
+          decoding="async"
+          draggable="false"
+        >
+      </div>
+      <div class="weekly-review-layer back-character-layer" aria-hidden="true"></div>
+      <div class="weekly-review-layer foreground-character-layer" aria-hidden="true"></div>
+      <div class="weekly-review-layer foreground-object-layer" aria-hidden="true"></div>
     </div>
-    <div class="panel">
-      <div class="panel-title">今週の店舗状況</div>
-      <div class="status-list" id="statusMeters"></div>
-    </div>
-    <div class="panel">
-      <div class="panel-title">主要KPI</div>
-      <div class="result-grid" id="weeklyKpis"></div>
-    </div>
-    <div class="panel">
-      <div class="panel-title">収支の内訳</div>
-      <button class="pixel-btn" id="toggleBreakdownBtn" style="width:100%;margin-bottom:2px">内訳を見る ▾</button>
-      <div class="breakdown-list" id="weeklyBreakdown" style="display:none"></div>
-    </div>
-    <div class="panel">
-      <div class="panel-title">重要な出来事</div>
-      <div class="event-list" id="weeklyEvents"></div>
-    </div>
-    <div class="panel">
-      <div class="panel-title">なぜそうなった？</div>
-      <button class="pixel-btn" id="toggleWhyBtn" style="width:100%;margin-bottom:2px">要因を見る ▾</button>
-      <div id="whyBreakdown" style="display:none"></div>
+    <div class="weekly-review-ui">
+      <div class="panel dark">
+        <div class="panel-title">今週の総評</div>
+        <div id="resultSummary"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-title">今週の店舗状況</div>
+        <div class="status-list" id="statusMeters"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-title">主要KPI</div>
+        <div class="result-grid" id="weeklyKpis"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-title">収支の内訳</div>
+        <button class="pixel-btn" id="toggleBreakdownBtn" style="width:100%;margin-bottom:2px">内訳を見る ▾</button>
+        <div class="breakdown-list" id="weeklyBreakdown" style="display:none"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-title">重要な出来事</div>
+        <div class="event-list" id="weeklyEvents"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-title">なぜそうなった？</div>
+        <button class="pixel-btn" id="toggleWhyBtn" style="width:100%;margin-bottom:2px">要因を見る ▾</button>
+        <div id="whyBreakdown" style="display:none"></div>
+      </div>
     </div>
   </section>
 
