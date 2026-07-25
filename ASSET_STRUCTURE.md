@@ -1,24 +1,52 @@
-# v0.6.2 背景素材
+# Image asset structure
 
-HTMLと `assets` フォルダを同じ階層のまま配置してください。
+All runtime images are external files under `assets/images/`. Do not add image
+files to the repository root and do not embed images as `data:image/...` Base64
+URLs in HTML, CSS, or JavaScript.
 
 ```text
-index.html
-assets/
-  backgrounds/
-    home.png
-    weekly-plan.png
-    staffing.png
-    inventory.png
-    policy.png
-    consult.png
-    weekly-result.png
-    monthly.png
-    evaluation.png
-    notebook.png
-    complete.png
-    crisis.png
+assets/images/
+├── home/
+│   ├── facility-strip.png
+│   └── pharmacy-home-map.png
+├── meeting/
+│   └── monthly-closing-meeting.png
+├── pharmacy/
+│   └── backgrounds/
+│       └── pharmacy-weekly-review-bg.jpeg
+├── scenes/
+│   ├── complete.png
+│   ├── consult.png
+│   ├── crisis.png
+│   ├── evaluation-legacy.png
+│   ├── home.png
+│   ├── inventory.png
+│   ├── monthly.png
+│   ├── notebook.png
+│   ├── policy.png
+│   ├── staffing.png
+│   ├── weekly-plan.png
+│   └── weekly-result.png
+└── staff/
+    ├── ito/
+    │   └── ito_profile.png
+    ├── sato/
+    │   └── sato_profile.png
+    ├── suzuki/
+    │   └── suzuki_profile.png
+    ├── tanaka/
+    │   ├── tanaka_profile.png
+    │   └── tanaka_fatigue_*.png
+    └── watanabe/
+        └── watanabe_profile.png
 ```
 
-背景・UI・文字・ゲームロジックは分離されています。
-背景PNGが欠損した場合も、v0.6.2ではCSSフォールバックが表示され、黒一色にはなりません。
+Run the same validation used in CI before committing:
+
+```text
+node scripts/validate-assets.mjs
+```
+
+The validation fails when an image reference is missing, an image is stored at
+the repository root, Base64 image data is embedded in HTML, or duplicate image
+content exists under `assets/images`.
